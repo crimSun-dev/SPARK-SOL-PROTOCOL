@@ -63,7 +63,9 @@ def list_repos(tokens: list[str]) -> tuple[list[dict], set[str], int]:
                 owners.add(r["nameWithOwner"].split("/")[0].lower())
         except Exception as e:                    # the type only: the message can name a private repo
             failed += 1
-            print(f"token {failed}: listing failed ({type(e).__name__})", file=sys.stderr)
+            m = re.search(r"HTTP \d{3}[^(\n]*", str(e))    # the status, never the URL (it can name a repo)
+            print(f"token {failed}: listing failed ({type(e).__name__}"
+                  + (f", {m.group(0).strip()}" if m else "") + ")", file=sys.stderr)
         finally:
             if tok:
                 if saved is None:
