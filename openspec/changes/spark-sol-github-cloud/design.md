@@ -37,12 +37,6 @@ A fine-grained token without Issues and Pull requests read gets no counts. One w
 
 So when a count cannot be read, the job keeps the count already in Neon. When a README cannot be read (anything but 404), it leaves the PC's document as it is. Verified with a public-plus-private token lacking Contents read: 0 written, 10 unchanged, 11 kept.
 
-### 4. A token that sees less never writes less
-
-A fine-grained token without Issues and Pull requests read gets no counts. One without Contents read gets 403 on private READMEs. Writing those thinner documents would make the PC and the cloud overwrite each other on every run, as the first real run showed: 21 written, with "None issues".
-
-So when a count cannot be read, the job keeps the count already in Neon. When a README cannot be read (anything but 404), it leaves the PC's document as it is.
-
 ## Risks / Trade-offs
 
 - [The Neon credential is in GitHub] → It is an encrypted Actions secret. Pull requests from forks do not receive it. Rotating the Neon password revokes it.
