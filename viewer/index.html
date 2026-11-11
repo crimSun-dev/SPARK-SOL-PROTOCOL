@@ -484,24 +484,62 @@ const MOTIFS = [
   { name: "flicker", ms: 840, at: (t) => ({ da: -.6 * Math.max(0, Math.sin(t * Math.PI * 6)) }) },
   { name: "ring",    ms: 950, at: (t) => ({ h: 1 + .8 * bell(t), ha: -.3 * bell(t), da: -.25 * bell(t) }) },
 ];
-// the same category and key always choose the same slots; birth sits half the table away from recall
+// The table: the eight shapes, times tiers of tempo and size. It doubles when the largest
+// category outgrows half of it, so the same category rarely holds two keys on one slot.
+// Doubling keeps every key's shape and moves only about half of them to a new tier.
+function motifTiers() {
+  const per = {}; let most = 1;
+  for (const n of nodes) most = Math.max(most, per[n.group] = (per[n.group] || 0) + 1);
+  let tiers = 1; while (MOTIFS.length * tiers < 2 * most) tiers *= 2;
+  return tiers;
+}
+function tierStyle(tier) {        // tier 0 is the shape as written; later tiers spread by golden-ratio steps
+  if (!tier) return { speed: 1, amp: 1 };
+  return { speed: .86 + .18 * ((tier * .6180339887) % 1), amp: .75 + .5 * ((tier * .7548776662 + .5) % 1) };
+}
+// A key's slot is its hash, unless an earlier key of the same category (hash order, then
+// key) holds it: then the next free slot. The table is at least twice the largest category,
+// so two keys of one dye never share a slot. A key keeps its slot unless the table doubles
+// or a new key of its category sorts ahead of it on that slot.
+// Recall and birth share a tier and sit half the shapes apart, so they never share a shape.
 function motifSlots(group, key) {
-  const recall = hashStr(group + ":" + key) % MOTIFS.length;
-  return { recall, birth: (recall + MOTIFS.length / 2) % MOTIFS.length };
+  const tiers = motifTiers(), S = MOTIFS.length, N = S * tiers;
+  const home = (k) => { const h = hashStr(group + ":" + k); return (Math.floor(h / S) % tiers) * S + h % S; };
+  const keys = [...new Set(nodes.filter((n) => n.group === group).map((n) => n.key).concat(key))]
+    .map((k) => ({ k, h: hashStr(group + ":" + k) })).sort((a, b) => a.h - b.h || (a.k < b.k ? -1 : a.k > b.k ? 1 : 0));
+  const taken = new Set(); let recall = home(key);
+  for (const { k } of keys) {
+    let s = home(k); while (taken.has(s)) s = (s + 1) % N;
+    taken.add(s); if (k === key) { recall = s; break; }
+  }
+  const shape = recall % S, tier = Math.floor(recall / S);
+  return { recall, birth: tier * S + (shape + S / 2) % S, tiers };
+}
+// Each note's own small variation, from a second hash: about ±6% tempo and ±8% size.
+function noteStyle(group, key, slot) {
+  const f = hashStr("motif:" + group + ":" + key), t = tierStyle(Math.floor(slot / MOTIFS.length));
+  return { shape: slot % MOTIFS.length,
+           speed: t.speed * (.94 + .12 * ((f & 0xffff) / 0xffff)),
+           amp: t.amp * (.92 + .16 * ((f >>> 16) / 0xffff)) };
 }
 const motifs = new Map();         // star -> { v, t0, t }: its own set, so clearing `pulsing` never ends one
 function gesture(n, family) {
   if (!n) return;
   if (REDUCED.matches) { pulsing.add(n); paintStar(n); return; }   // §5: a filament hold, not a motif
-  const v = motifSlots(n.group, n.key)[family];
-  // a birth is fitted to the 700 ms filament pulse, so it ends as the star opens
-  motifs.set(n, { v, family, ms: family === "birth" ? 700 : MOTIFS[v].ms, t0: null, t: 0 });
-  window.__spark.gestures.push({ key: n.group + ":" + n.key, family, slot: v, motif: MOTIFS[v].name, at: performance.now() });
+  const v = motifSlots(n.group, n.key)[family], st = noteStyle(n.group, n.key, v);
+  // a birth is fitted to the 700 ms filament pulse, so it ends as the star opens; every motif stays under a second
+  const ms = family === "birth" ? 700 : Math.min(980, MOTIFS[st.shape].ms * st.speed);
+  motifs.set(n, { v, family, shape: st.shape, amp: st.amp, ms, t0: null, t: 0 });
+  window.__spark.gestures.push({ key: n.group + ":" + n.key, family, slot: v, motif: MOTIFS[st.shape].name,
+                                 ms: Math.round(ms), amp: +st.amp.toFixed(3), at: performance.now() });
 }
 // While a star is in `pulsing`, filament wins the colour: no dye tint, no dyed leader. The shape still plays.
 function motifOf(n) {
   const m = motifs.get(n); if (!m || m.t0 === null) return null;
-  const s = MOTIFS[m.v].at(m.t);
+  const raw = MOTIFS[m.shape].at(m.t), s = {};
+  for (const k of ["h", "d"]) if (raw[k] !== undefined) s[k] = 1 + (raw[k] - 1) * m.amp;
+  for (const k of ["ha", "da"]) if (raw[k] !== undefined) s[k] = raw[k] * m.amp;
+  for (const k of ["tint", "lead"]) if (raw[k] !== undefined) s[k] = Math.min(1, raw[k] * m.amp);
   if (pulsing.has(n)) { delete s.tint; delete s.lead; }
   return s;
 }
@@ -808,7 +846,7 @@ const ask = $("ask"), hfBtn = $("handsfree"), pttBtn = $("ptt");
 const answerEl = $("answer"), badgeEl = $("badge");
 let HEALTH = null, speaking = false, paused = false, turnBusy = false;
 let lastBadge = null;              // what the badge last said; the same pair is not shown again
-window.__spark = { speakLog: [], turns: [], gestures: [], motifSlots, motifs, MOTIFS, pulsing, cited };   // receipts for the verify steps
+window.__spark = { speakLog: [], turns: [], gestures: [], motifSlots, noteStyle, motifs, MOTIFS, pulsing, cited, nodes };   // receipts for the verify steps
 
 // ── browser hosts for the drill: every resource this page ever loaded ─
 const HOSTS = new Set([location.hostname]);
