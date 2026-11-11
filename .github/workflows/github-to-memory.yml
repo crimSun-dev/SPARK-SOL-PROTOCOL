@@ -1,6 +1,7 @@
 # Keeps Flaxeon's memory current with GitHub while the PC is off. Writes only the
-# summaries of repos that are not cloned on the PC (cloud_github.py). The log is
-# counts only: this repo is public, and so are its Action logs.
+# summaries of repos that are not cloned on the PC (cloud_github.py), then sends the
+# sky to Firestore (cloud_sky.py) so the GitHub Pages viewer works with the PC off.
+# The log is counts only: this repo is public, and so are its Action logs.
 name: GitHub to memory
 
 on:
@@ -35,3 +36,13 @@ jobs:
             echo "NEON_URL or GH_READ_TOKENS is not set; nothing to do."; exit 0
           fi
           python cloud_github.py
+      # The web viewer's cloud copy, for when the PC is off (cloud_sky.py -> Firestore).
+      # Runs even when the GitHub sync fails, so a GitHub outage never freezes the sky.
+      - name: Send the sky to Firestore
+        if: always()
+        env:
+          NEON_URL: ${{ secrets.NEON_URL }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          pip install --quiet "firebase-admin==7.5.0"
+          python cloud_sky.py

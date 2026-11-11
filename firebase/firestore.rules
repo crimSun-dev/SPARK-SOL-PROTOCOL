@@ -1,0 +1,47 @@
+rules_version = '2';
+// Firestore rules for the `flaxeon` project. Deployed by `python cloud_firebase.py apply`.
+// Every client in the project reads through these; the service account (the PC, the
+// GitHub Action) bypasses them.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // A phone paired through meshgate. Those uids are minted only by the PC with the
+    // service account (custom tokens); a Google or email account always gets a random uid.
+    function phone() {
+      return request.auth != null && request.auth.uid.matches('phone-[0-9a-f]{12}');
+    }
+    // The operator's own Google account: listed in spark_access/{uid} by
+    // `cloud_firebase.py grant`. No client can write that list.
+    function operator() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/spark_access/$(request.auth.uid));
+    }
+
+    // Flaxeon's replica. Was "any signed-in user"; now the paired phones and the operator.
+    match /flaxeon/default/{sub}/{docId} {
+      allow read: if phone() || operator();
+      allow write: if (phone() || operator()) && sub == 'presence';
+    }
+
+    // SPARK SOL's web viewer with the PC off.
+    match /spark_sky/{part} {                 // the sky, written by cloud_sky.py
+      allow read: if operator();
+    }
+    match /spark_private/{name} {             // the Claude key the web viewer asks with
+      allow read, write: if operator();
+    }
+    match /spark_inbox/{id} {                 // "remember" with the PC off; the PC files them
+      allow read, delete: if operator();
+      allow create: if operator()
+        && request.resource.data.keys().hasOnly(['text', 'created_at'])
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 4000
+        && request.resource.data.created_at == request.time;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

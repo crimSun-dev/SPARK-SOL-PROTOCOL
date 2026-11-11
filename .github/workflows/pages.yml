@@ -1,6 +1,6 @@
-# The read-only web viewer. Publishes viewer/ with an empty GRAPH: no memory is ever
+# The web viewer. Publishes viewer/ with an empty GRAPH: no memory is ever
 # in this copy. The page reads the live sky from the SPARK SOL server on the viewer's
-# own machine (http://127.0.0.1:4700/graph and /health) and shows an empty sky anywhere else.
+# own machine (http://127.0.0.1:4700), or with the PC off from the passkey-locked cloud Worker.
 name: Pages
 
 on:

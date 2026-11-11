@@ -18,3 +18,11 @@ three            0.186.0  MIT   build/three.module.js + build/three.core.js
 
 brand/spark-sol-lockup.png  cropped from brand/Flaxoen Spiral Spark Logo.png
 brand/spark-sol-mark.png    (2172x724), ground #0a1023 keyed to alpha. Not redrawn.
+
+firebase         11.0.2   Apache-2.0   firebase/firebase-spark.mjs, 2026-11-11
+  The one file here that is not a package's own build: esbuild 0.24.0 bundled
+  firebase/app, firebase/auth and firebase/firestore/lite from the npm package into
+  one ES module (entry.js beside it is the whole input), so nothing loads from gstatic.
+    npx esbuild entry.js --bundle --format=esm --minify --legal-comments=eof
+  npm shasum (sha1) 5de236ee1f2fa517279595e5d4199428da772f48
+  bundle sha256 95ccf0f677409703e337846eb71ffcb1c6d38f0e85c843cb0377e875efb27c43

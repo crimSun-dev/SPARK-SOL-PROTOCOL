@@ -412,6 +412,11 @@ const REGION_NAME = {
 const REMOTE = !/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
 const API = REMOTE ? "http://127.0.0.1:" + (/^\d{2,5}$/.test(new URLSearchParams(location.search).get("port") || "")
   ? new URLSearchParams(location.search).get("port") : "4700") : "";   // ?port= for a second server; always this machine
+// When this machine's server does not answer, the web viewer opens the cloud copy of
+// Flaxeon's memory instead: Firestore in the `flaxeon` project (cloud_sky.py writes it from
+// Neon every 30 minutes), readable only by the operator's Google account. Answers come
+// from Claude, called from this browser with the key kept in that same Firestore.
+let MODE = REMOTE ? "probe" : "pc";      // "pc": this machine's server; "cloud": Firestore
 const CORE = new THREE.Color("#f4f0e6");
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)");
 const $ = (id) => document.getElementById(id);
@@ -922,9 +927,22 @@ function api(path, body, raw) {
 const TOKEN_KEY = "spark-sol-web-token";
 function webToken() { try { return localStorage.getItem(TOKEN_KEY) || ""; } catch { return ""; } }
 function saveToken(t) { try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch {} askMode(); }
-function webLabel() { return webToken() ? "LIVE · PAIRED" : "LIVE · READ ONLY"; }
+function webLabel() {
+  if (MODE === "cloud") return CLOUD_LABEL[CS.phase] ? CLOUD_LABEL[CS.phase]()
+                                                    : "CLOUD · PC OFF";
+  return webToken() ? "LIVE · PAIRED" : "LIVE · READ ONLY";
+}
 function askMode() {
   if (!REMOTE) return;
+  if (MODE === "cloud") {
+    const p = CS.phase;
+    ask.type = p === "nokey" ? "password" : "text";
+    ask.placeholder = p === "signin" ? "Press Enter to sign in with Google"
+      : p === "nokey" ? "Paste your Claude API key once" : p === "denied" ? "Type: sign out" : "Ask the notes (cloud)";
+    ask.title = p === "ready" ? "The PC is off: answers come from the cloud copy of the memory" : "";
+    return;
+  }
+  ask.type = "text";
   ask.placeholder = webToken() ? "Ask the notes" : "Pair: type the WEB CODE from the local page";
   ask.title = webToken() ? "" : "The local SPARK SOL page shows the code under WEB CODE";
 }
@@ -941,6 +959,240 @@ async function pairWith(code) {
     else setAnswer("That code was not right. Five misses replace the code.", true);
   } catch { setAnswer("SPARK SOL did not answer.", true); }
   reading("activity", webLabel(), "live");
+}
+
+// ── the cloud copy: Firestore behind the operator's Google account ────
+const CS = { phase: "load", uid: "", key: "", fb: null };
+const CLOUD_MODEL = "claude-opus-5-5";
+const CLOUD_LABEL = {
+  load: () => "PC OFF · OPENING THE CLOUD MEMORY",
+  down: () => "THE PC IS OFF AND THE CLOUD DID NOT ANSWER",
+  signin: () => "PC OFF · PRESS ENTER IN THE ASK LINE TO SIGN IN WITH GOOGLE",
+  denied: () => "PC OFF · THIS GOOGLE ACCOUNT IS NOT ALLOWED",
+  nokey: () => "CLOUD · PASTE YOUR CLAUDE KEY ONCE",
+  ready: () => "CLOUD · PC OFF" + (data.read_at ? " · SYNCED " + fmtDay(data.read_at) : ""),
+};
+async function fbx() {                  // loaded only when the PC is off
+  if (CS.fb) return CS.fb;
+  const m = await import("./vendor/firebase/firebase-spark.mjs");
+  const { FIREBASE_CONFIG } = await import("./firebase-config.js");
+  const app = m.initializeApp(FIREBASE_CONFIG);
+  const auth = m.getAuth(app);
+  await new Promise((res) => { const off = m.onAuthStateChanged(auth, () => { off(); res(); }); });
+  CS.fb = { m, auth, db: m.getFirestore(app) };
+  return CS.fb;
+}
+function setPhase(p) {
+  CS.phase = p; askMode();
+  if (!turnBusy) reading("activity", webLabel(), p === "ready" ? "live" : "warn");
+}
+const refused = (e) => /permission|insufficient/i.test(String(e && (e.code || e.message)));
+let lastCloud = 0;
+async function cloudHealth(force) {
+  if (MODE !== "cloud") { MODE = "cloud"; memRev = undefined; lastCloud = 0; setPhase("load"); }
+  HEALTH = null;
+  if (!force && Date.now() - lastCloud < 60000) return null;   // the cloud changes every 30 minutes at most
+  lastCloud = Date.now();
+  let f;
+  try { f = await fbx(); } catch { lastCloud = 0; ask.disabled = true; setPhase("down"); return null; }
+  ask.disabled = false;
+  const u = f.auth.currentUser;
+  if (!u) { setPhase("signin"); return null; }
+  CS.uid = u.uid;
+  let meta;
+  try { meta = (await f.m.getDoc(f.m.doc(f.db, "spark_sky", "meta"))).data(); }
+  catch (e) { if (refused(e)) setPhase("denied"); else { lastCloud = 0; setPhase("down"); } return null; }
+  if (!CS.key) {
+    try { CS.key = ((await f.m.getDoc(f.m.doc(f.db, "spark_private", "brain"))).data() || {}).anthropic_key || ""; } catch {}
+  }
+  if (meta && meta.gen !== memRev) { memRev = meta.gen; await swapSky(); }
+  setPhase(CS.key ? "ready" : "nokey");
+  return null;
+}
+function noteTitle(text) {             // commit_note's title: the first seven words
+  const w = text.split(" "); const t = w.slice(0, 7).join(" ") + (w.length > 7 ? "…" : "");
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+function inboxNode(id, text, ts, idx) {
+  const day = (ts && ts.toDate ? ts.toDate() : new Date()).toISOString().slice(0, 10);
+  return { id: idx, key: "inbox-" + id, label: noteTitle(text), group: "captures", kind: "capture",
+           excerpt: text.length > 700 ? text.slice(0, 699) + "…" : text, updated: day,
+           source: "Saved on the web with the PC off; filed into notes/captures when SPARK SOL next runs",
+           size: text.length, text };
+}
+async function cloudSky() {             // the chunks of one generation, then the notes waiting in the inbox
+  const { m, db } = await fbx();
+  const meta = (await m.getDoc(m.doc(db, "spark_sky", "meta"))).data();
+  if (!meta) return null;
+  const parts = await Promise.all(Array.from({ length: meta.chunks },
+    (_, i) => m.getDoc(m.doc(db, "spark_sky", meta.gen + "_" + String(i).padStart(3, "0")))));
+  const g = JSON.parse(parts.map((p) => (p.data() || {}).data || "").join(""));
+  const inbox = await m.getDocs(m.collection(db, "spark_inbox"));
+  const waiting = [];
+  inbox.forEach((d) => waiting.push(d));
+  waiting.sort((a, b) => ((a.data().created_at || {}).seconds || 0) - ((b.data().created_at || {}).seconds || 0));
+  for (const d of waiting) g.nodes.push(inboxNode(d.id, d.data().text || "", d.data().created_at, g.nodes.length));
+  if (waiting.length && !g.regions.includes("captures")) g.regions.push("captures");
+  return g;
+}
+async function cloudRemember(raw) {    // commit_note's rules; the PC files it into notes/ and Neon later
+  const text = String(raw || "").replace(/\s+/g, " ").trim().replace(/^[ .,:;-]+|[ .,:;-]+$/g, "").slice(0, 4000);
+  if (!text) return { answer: "That did not save: there was nothing after the phrase to remember.", error: "empty" };
+  const { m, db } = await fbx();
+  let ref;
+  try { ref = await m.addDoc(m.collection(db, "spark_inbox"), { text, created_at: m.serverTimestamp() }); }
+  catch (e) { return { answer: "That did not save: the cloud refused it (" + (e.code || e.name) + ").", error: "inbox" }; }
+  const node = inboxNode(ref.id, text, null, nodes.length);
+  const related = (scoreNotes(text, 3)[0] || [-1])[0];
+  const said = text.length <= 160 ? text : node.label;
+  return { answer: `Saved: ${said.replace(/\.$/, "")}. It reaches Flame and Tempest when the PC is back on.`,
+           birth: { node, related } };
+}
+async function cloudSignOut() {
+  const { m, auth } = await fbx();
+  await m.signOut(auth);
+  setTimeout(() => location.reload(), 1200);              // the memory leaves the page with the account
+  return { answer: "Signed out of the cloud memory in this browser." };
+}
+async function cloudGate(text) {       // before the cloud is ready: sign in, a refused account, the key
+  if (/^sign ?out\b/i.test(text) && CS.phase !== "signin") { setAnswer((await cloudSignOut()).answer); return; }
+  if (CS.phase === "signin") {
+    try { const { m, auth } = await fbx(); await m.signInWithPopup(auth, new m.GoogleAuthProvider()); }
+    catch (e) { setAnswer("Google sign-in did not finish (" + (e.code || e.name) + ").", true); return; }
+    return cloudHealth(true);
+  }
+  if (CS.phase === "denied") {
+    setAnswer("This Google account is not on the list yet. On the PC, run: python cloud_firebase.py grant " + CS.uid
+              + "  (or type: sign out)", true);
+    return;
+  }
+  if (CS.phase === "nokey") {
+    if (!/^sk-ant-[A-Za-z0-9_\-]{20,}$/.test(text)) { setAnswer("That does not look like a Claude API key (sk-ant-…).", true); return; }
+    try {
+      const { m, db } = await fbx();
+      await m.setDoc(m.doc(db, "spark_private", "brain"), { anthropic_key: text, set_at: m.serverTimestamp() });
+    } catch (e) { setAnswer("The key did not save (" + (e.code || e.name) + ").", true); return; }
+    CS.key = text; setPhase("ready");
+    setAnswer("Key saved to your Firebase. Every browser you sign in to can ask now.");
+    return;
+  }
+  setAnswer("The cloud did not answer. It is tried again every minute.", true);
+  cloudHealth(true);
+}
+// server.py's note search, ported: the same tokens, scores and spans over each star's full text
+const STOPW = new Set(`a an and are as at be been but by can could did do does doing for from
+had has have he her hers him his how i if in into is it its just me my of on or our
+she so than that the their them then there these they this those to too up us was
+we were what when where which who whom why will with would you your yours about
+any all also am tell know say said want okay ok please hey spark flaxeon draven
+today now doing going good fine well thanks thank hello hi morning evening night yes no`.split(/\s+/));
+function toks(text) {
+  const out = [];
+  for (let w of String(text || "").toLowerCase().match(/[a-z0-9]+/g) || []) {
+    if (STOPW.has(w) || w.length < 2) continue;
+    if (w.length > 4 && w.endsWith("s") && !w.endsWith("ss")) w = w.slice(0, -1);
+    out.push(w);
+  }
+  return out;
+}
+let SEARCH = [], DFC = new Map();
+function rebuildSearch() {
+  SEARCH = nodes.map((n) => {
+    const text = n.text || n.excerpt || ""; const body = new Map();
+    for (const t of toks(text)) body.set(t, (body.get(t) || 0) + 1);
+    return { title: new Set(toks((n.label || "") + " " + (n.key ?? ""))), body, text };
+  });
+  DFC = new Map();
+  for (const e of SEARCH) for (const t of new Set([...e.title, ...e.body.keys()])) DFC.set(t, (DFC.get(t) || 0) + 1);
+}
+function scoreNotes(q, k = 6) {
+  const qs = new Set(toks(q)); const N = SEARCH.length;
+  if (!qs.size || !N) return [];
+  const out = [];
+  SEARCH.forEach((e, i) => {
+    let s = 0;
+    for (const t of qs) {
+      const idf = Math.log(1 + N / (1 + (DFC.get(t) || 0)));
+      if (e.title.has(t)) s += 3 * idf;
+      const c = e.body.get(t) || 0;
+      if (c) s += idf * (1 + Math.log(c));
+    }
+    if (s > 0) out.push([i, s]);
+  });
+  return out.sort((a, b) => b[1] - a[1]).slice(0, k);
+}
+function bestSpan(text, q, limit = 520) {
+  const qs = new Set(toks(q));
+  const sents = String(text || "").split(/(?<=[.!?])\s+|\n{2,}/).map((s) => s.trim()).filter(Boolean);
+  if (!sents.length) return "";
+  let best = sents[0].slice(0, limit), bestHits = -1;
+  for (let i = 0; i < sents.length; i++) {
+    let span = "", j = i;
+    while (j < sents.length && span.length + sents[j].length + 1 <= limit) { span = (span + " " + sents[j]).trim(); j++; }
+    if (!span) span = sents[i].slice(0, limit);
+    const hits = toks(span).filter((t) => qs.has(t)).length;
+    if (hits > bestHits) { best = span; bestHits = hits; }
+  }
+  return best;
+}
+// the PC's routes, as far as they mean anything with the PC off
+const CLOUD_ROUTES = [
+  [/^(?:please )?use (?:your|the) (?:local|browser) voice\b/i, () => ({ answer: "The web viewer answers in text, so there is no voice to switch." })],
+  [/^(?:switch to (?:your )?(?:local|big) brain|go local)\b/i, () => ({ answer: "The PC is off, so only the cloud brain runs here: Claude." })],
+  [/^(?:switch to claude|go cloud)\b/i, () => ({ answer: "Already on Claude, in the cloud. The PC is off." })],
+  [/^which brain are you on\b/i, () => ({ answer: `Claude, model ${CLOUD_MODEL}, in the cloud. The PC is off.` })],
+  [/^sign ?out\b/i, () => cloudSignOut()],
+  [/^(?:remember that|note to self|don'?t let me forget|do not let me forget|log this)[\s,:;.\-]*([\s\S]*)$/i, (m) => cloudRemember(m[1])],
+];
+const CLOUD_PERSONA = `You are Flaxeon, the notes instrument of F.L.A.X.E.O.N. Draven's PC is off right now, so you are answering from the cloud copy of the memory on the web viewer. You speak to Draven alone.
+
+How you answer:
+- One true sentence first. Then only the facts that matter, in a sentence or two. Do not recite the note; it is already on the screen.
+- Answer only from the notes sent with the question. If a note answers it, give the answer. Only if none does, say the notes do not cover it. Never invent a source. Never mention note numbers.
+- Never claim an action happened. Only the page acts, and it reports what it did.
+- If asked what a turn costs here: it runs on the cloud brain, so it costs a little per question.
+- Call the operator Draven, or nothing. No pet names. Never "sir".
+- Wit is dry and rare. Never perform a joke.
+- British spelling.
+- Talk about scales, fire or saga plot only when the question is about that record.
+- Plain spoken sentences: no lists, no markdown, no emoji.
+- If a pronoun is needed for yourself, use she.
+
+Asked to save, note or keep anything: reply only [REMEMBER] and the words.`;
+const CLOUD_HISTORY = [];                // three exchanges, as on the PC; never stored
+async function cloudTurn(raw) {
+  const q = raw.replace(/[’‘]/g, "'").replace(/\s+/g, " ").trim();      // server.py's _norm
+  for (const [re, fn] of CLOUD_ROUTES) {
+    const m = re.exec(q);
+    if (m) return { nodes: [], ...(await fn(m)) };
+  }
+  const hits = scoreNotes(q);
+  const top = hits.length ? hits[0][1] : 0;
+  const cites = hits.filter(([, s]) => s >= top * 0.5).map(([i]) => i);
+  const notes = hits.map(([i], n) => `[${n + 1}] ${nodes[i].label} (${REGION_NAME[nodes[i].group] || nodes[i].group}): ${bestSpan(SEARCH[i].text, q)}`);
+  const today = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }).replace(",", "");
+  const user = `Today is ${today}.\n\nNotes:\n${notes.length ? notes.join("\n\n") : "(no note matched)"}\n\nQuestion: ${q}`;
+  let r;
+  try {
+    r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: {
+      "Content-Type": "application/json", "x-api-key": CS.key, "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true" },    // the key is the operator's own, in this browser only
+      body: JSON.stringify({ model: CLOUD_MODEL, max_tokens: 600, system: CLOUD_PERSONA,
+                             messages: [...CLOUD_HISTORY, { role: "user", content: user }] }) });
+  } catch { return { answer: "No answer: the cloud brain did not answer.", nodes: [], error: "brain unreachable" }; }
+  if (r.status === 401) {
+    CS.key = ""; setPhase("nokey");
+    return { answer: "Claude refused the key. Paste a new one into the ask line.", nodes: [], error: "brain 401" };
+  }
+  if (!r.ok) return { answer: `No answer: the cloud brain answered HTTP ${r.status}.`, nodes: [], error: "brain " + r.status };
+  const d = await r.json();
+  const answer = (d.content || []).filter((c) => c.type === "text").map((c) => c.text).join("").trim();
+  const tag = /\[REMEMBER\]\s*([\s\S]+)/i.exec(answer);
+  if (tag) return { nodes: [], tag: "REMEMBER", ...(await cloudRemember(tag[1])) };
+  const said = answer.replace(/\s*\[\d\]/g, "").trim();
+  CLOUD_HISTORY.push({ role: "user", content: q }, { role: "assistant", content: said });
+  CLOUD_HISTORY.splice(0, Math.max(0, CLOUD_HISTORY.length - 6));
+  return { answer: said, nodes: cites, brain: "claude", model: CLOUD_MODEL };
 }
 
 // ── health: voice, ears, brain ────────────────────────────────────────
@@ -969,6 +1221,8 @@ async function pollHealth(claim) {
     HEALTH = await r.json();
   } catch { HEALTH = null; }
   const up = !!HEALTH;
+  if (REMOTE && !up) return cloudHealth();   // the PC is off: the cloud copy of the memory
+  if (REMOTE && MODE !== "pc") { MODE = "pc"; memRev = undefined; askMode(); }   // the PC came back: its sky wins
   if (REMOTE) {                    // read-only: follow every memory change, draw nothing else
     if (up && HEALTH.mem_rev !== memRev) { memRev = HEALTH.mem_rev; swapSky(); }
     if (!up) memRev = undefined;   // the server came back: read the whole sky again
@@ -1076,23 +1330,26 @@ function showCited(ids) {
 async function turn(text, heardSecs) {
   text = (text || "").trim();
   if (!text || turnBusy) return;
-  if (REMOTE && !webToken()) return pairWith(text);
+  if (MODE === "cloud" && CS.phase !== "ready") return cloudGate(text);
+  if (REMOTE && MODE !== "cloud" && !webToken()) return pairWith(text);
   stopSpeaking(); turnBusy = true;
   reading("activity", "THINKING", "");
   const t0 = performance.now();
   let d;
   try {
+    if (MODE === "cloud") d = await cloudTurn(text); else {
     const r = await api("/chat", { text });
     if (REMOTE && r.status === 401) {
       saveToken("");
       d = { answer: "This browser is not paired. Type the WEB CODE from the local page.", nodes: [], error: "not paired" };
     } else d = await r.json();
+    }
   }
-  catch { d = { answer: "The server did not answer.", nodes: [], error: "no server" }; }
+  catch { d = { answer: MODE === "cloud" ? "The cloud did not answer." : "The server did not answer.", nodes: [], error: "no server" }; }
   window.__spark.turns.push({ text, heardSecs, thinkMs: performance.now() - t0, answer: d.answer, nodes: d.nodes });
   turnBusy = false;
   const swap = noteRev(d.sky_rev); if (swap) await swap;   // ids are positions in the current sky
-  if (d.birth) addNote(d.birth.node, d.birth.related);
+  if (d.birth) { addNote(d.birth.node, d.birth.related); if (MODE === "cloud") rebuildSearch(); }
   else showCited(d.nodes);
   setAnswer(d.answer, !!d.error);
   await speak(d.answer, d.brain ? d : null);
@@ -1105,7 +1362,7 @@ async function turn(text, heardSecs) {
     setAnswer(e.answer, !!e.error); await speak(e.answer, e.brain ? e : null);
   }
   postHosts();
-  pollHealth();
+  if (MODE !== "cloud") pollHealth();
 }
 ask.addEventListener("keydown", (e) => {
   if (e.key !== "Enter" || e.isComposing) return;
@@ -1153,7 +1410,10 @@ async function swapSky() {
   if (swapping) return swapping;
   swapping = (async () => {
     let g;
-    try { g = await (await fetch(API + "/graph", { cache: "no-store" })).json(); } catch { return; }
+    try {
+      g = MODE === "cloud" ? await cloudSky()
+                           : await (await fetch(API + "/graph", { cache: "no-store" })).json();
+    } catch { return; }
     if (!g || !Array.isArray(g.nodes)) return;
     const was = new Map(nodes.map((n) => [n.group + ":" + n.key, n]));   // known stars keep their place
     const firstSky = was.size === 0;          // the web viewer's opening read: frame it, no birth
@@ -1165,6 +1425,7 @@ async function swapSky() {
       nodes.push(n);
     }
     for (const l of g.links || []) links.push({ ...l });
+    if (MODE === "cloud") rebuildSearch(); else SEARCH = [];
     regions.length = 0;
     for (const r of g.regions || []) if (nodes.some((n) => n.group === r)) regions.push(r);
     layoutRegions();
@@ -1412,6 +1673,7 @@ function renderFind(q, stars, files, filesState) {
   }
   head("Files");
   if (filesState === "wait") none("Searching this machine's index…");
+  else if (filesState === "cloud") none("Files need the PC, and it is off.");
   else if (filesState === "down") none(REMOTE ? "Files need SPARK SOL running on this machine." : "The file index did not answer.");
   else if (!files.length) none("No file matches.");
   for (const f of files) {
@@ -1437,6 +1699,7 @@ function runFind() {
   if (q.length < 2) { closeFind(false); return; }
   const stars = findStars(q);
   lightFound(stars);
+  if (MODE === "cloud") { renderFind(q, stars, [], "cloud"); return; }   // the file index lives on the PC
   renderFind(q, stars, [], "wait");
   findTimer = setTimeout(async () => {
     findAbort = new AbortController();

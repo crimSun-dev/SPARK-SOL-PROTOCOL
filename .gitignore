@@ -16,3 +16,7 @@ Run-Jarvis-Fully-Local-Prompt-Pack.pdf
 CLAUDE_BUILD_PROMPT.md
 # Per-machine agent settings.
 .claude/settings.local.json
+# Left over from a local Cloudflare Worker test (holds a memory copy): delete cloud/ by hand.
+cloud/.dev.vars
+cloud/.wrangler/
+cloud/node_modules/

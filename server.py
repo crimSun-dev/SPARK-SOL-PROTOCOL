@@ -648,6 +648,66 @@ def watch_memory(stop: threading.Event, every: float) -> None:
               f"mem_rev={STATE['mem_rev']})", flush=True)
 
 
+# ── the cloud inbox: notes saved on the web viewer while the PC was off ────
+def _inbox():
+    """Firestore's spark_inbox through Flaxeon's own Firebase credentials, or None."""
+    parent = str(read_memory.PARENT)
+    if parent not in sys.path:
+        sys.path.insert(1, parent)
+    from memory.config_manager import get_firebase_credentials      # noqa: E402
+    creds = get_firebase_credentials()
+    if not creds:
+        return None
+    import firebase_admin                                            # the parent's venv has it
+    from firebase_admin import credentials, firestore
+    try:
+        app = firebase_admin.get_app()
+    except ValueError:
+        app = firebase_admin.initialize_app(credentials.Certificate(creds))
+    return firestore.client(app).collection("spark_inbox")
+
+
+def drain_inbox(col=None, commit=None) -> dict:
+    """File each waiting note exactly as a spoken "remember that" would (commit_note:
+    the capture file, Neon, the sky), oldest first, then delete it from the inbox.
+    A note that does not save stays in the inbox for the next pass."""
+    col = col if col is not None else _inbox()
+    commit = commit or commit_note
+    if col is None:
+        return {"filed": 0, "kept": 0, "reason": "no Firebase credentials"}
+    snaps = sorted(col.stream(), key=lambda d: str((d.to_dict() or {}).get("created_at") or ""))
+    filed = kept = 0
+    for snap in snaps:
+        text = str((snap.to_dict() or {}).get("text") or "")
+        try:
+            commit(text)
+        except NoteWriteError as e:
+            kept += 1
+            print(f"SPARK SOL: a web note stayed in the inbox ({e})", flush=True)
+            continue
+        snap.reference.delete()
+        filed += 1
+    return {"filed": filed, "kept": kept}
+
+
+def watch_inbox(stop: threading.Event, every: float) -> None:
+    """Drain at boot, then every `every` seconds. Quiet when Firebase is not set up."""
+    first = True
+    while first or not stop.wait(every):
+        first = False
+        if STATE["shutting_down"]:
+            return
+        try:
+            out = drain_inbox()
+        except Exception as e:
+            print(f"SPARK SOL: cloud inbox read failed ({type(e).__name__})", flush=True)
+            continue
+        if out.get("reason"):
+            return
+        if out["filed"]:
+            print(f"SPARK SOL: filed {out['filed']} note(s) saved on the web", flush=True)
+
+
 # ── routes: checked before anything reaches the brain ─────────────────────
 def _norm(s: str) -> str:
     s = s.replace("’", "'").replace("‘", "'")
@@ -1125,6 +1185,9 @@ def main() -> int:
     if args.watch > 0 and not args.no_read and not args.mirror_only:
         threading.Thread(target=watch_memory, args=(stop, max(10.0, args.watch)), daemon=True,
                          name="spark-memory-watch").start()
+    if not args.no_read and not args.mirror_only:
+        threading.Thread(target=watch_inbox, args=(stop, 60.0), daemon=True,
+                         name="spark-inbox-watch").start()
     if args.github_watch > 0 and not args.no_read and not args.mirror_only:
         threading.Thread(target=watch_github, args=(stop, max(60.0, args.github_watch)), daemon=True,
                          name="spark-github-watch").start()
