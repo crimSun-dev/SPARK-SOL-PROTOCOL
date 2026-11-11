@@ -562,16 +562,45 @@ def save_projects(prj: Projects) -> None:
     db.close()
 
 
-def publish(prj: Projects, say) -> dict:
+class PublishError(RuntimeError):
+    pass
+
+
+def memory_gate():
+    """Flaxeon's memory module, once its passkey gate is open in this process.
+    A closed gate makes Flaxeon's writes skip Neon and Firebase without queueing
+    anything, so publishing behind it would be a silent loss (2026-11-11: 210
+    summaries). Never opens Neon around the gate."""
+    sys.path.insert(1, str(PARENT))
+    from core.passkey import cloud_allowed
+    from memory import memory_manager as mm
+    if not cloud_allowed():
+        raise PublishError(
+            "Flaxeon's memory is locked in this process, so nothing would reach Neon. "
+            "Set FLAXEON_PASSKEY for this one run, or run with --no-publish.")
+    neon, _ = mm._backends()
+    if neon is None:
+        raise PublishError("no Neon store is configured for Flaxeon, so nothing would reach it")
+    return mm, neon
+
+
+def _indexed_in_neon(neon) -> set[str]:
+    return {name for name, d in neon.load_documents().items()
+            if isinstance(d, dict) and d.get("kind") == "repo_index" and d.get("indexer") == "spark_sol_build"}
+
+
+def publish(prj: Projects, say, github_read: bool = True) -> dict:
     """One repo_index document per project into Flaxeon's shared memory, through
     the parent's own save_document. Documents this indexer published before and
-    no longer has are forgotten. Nothing else in the store is touched."""
-    sys.path.insert(1, str(PARENT))
-    from memory import memory_manager as mm
+    no longer has are forgotten. Nothing else in the store is touched. The result
+    is counted in Neon, not taken on trust."""
+    mm, neon = memory_gate()
     from tools.memory_ingest import build_payload
     db = open_db()
     row = db.execute("SELECT v FROM meta WHERE k='published'").fetchone()
-    before = set(json.loads(row[0])) if row else set()
+    was_in_neon = _indexed_in_neon(neon)          # what earlier runs really wrote
+    before = (set(json.loads(row[0])) if row else set()) | was_in_neon
+    pending0 = len(mm._load_pending())
     names = []
     cache = mm._load_local()
     items = sorted(prj.by_key.values(), key=lambda p: p["key"])
@@ -579,18 +608,34 @@ def publish(prj: Projects, say) -> dict:
         payload = build_payload(p["key"], "repo_index", summary_text(p), source=p["path"],
                                 summary=summary_line(p))
         payload.update(region=p["region"], title=p["title"], indexer="spark_sol_build")
+        cache[p["key"]] = payload                  # Flaxeon fills the cache dict only on a write
         mm.save_document(p["key"], payload, _memory=cache, _write_cache=(i == len(items) - 1))
         names.append(p["key"])
         if (i + 1) % 50 == 0:
             say(f"  … {i + 1}/{len(items)} summaries saved")
-    stale = sorted(before - set(names))
+    stale = before - set(names)
+    if not github_read:                           # not seen this run is not gone: keep GitHub-only repos
+        stale = {n for n in stale if not n.startswith("gh_")}
+    stale = sorted(stale)
     for n in stale:
         mm.forget_document(n)
-    back = sum(1 for n in names[:5] if isinstance(mm.load_document(n), dict))
-    db.execute("INSERT OR REPLACE INTO meta VALUES ('published', ?)", (json.dumps(names),))
+    queued = len(mm._load_pending()) - pending0
+    in_neon = _indexed_in_neon(neon)
+    missing = sorted(set(names) - in_neon)
+    left = sorted(set(stale) & in_neon)
+    db.execute("INSERT OR REPLACE INTO meta VALUES ('published', ?)",
+               (json.dumps(sorted(set(names) & in_neon)),))
     db.commit()
     db.close()
-    return {"saved": len(names), "forgotten": len(stale), "read_back": f"{back}/{min(5, len(names))}"}
+    out = {"saved": len(names) - len(missing), "queued": queued,
+           "forgotten": len(set(stale) & was_in_neon) - len(left),
+           "in_neon": len(in_neon), "expected": len(names)}
+    if missing and len(missing) > queued:
+        raise PublishError(f"{len(missing)} of {len(names)} summaries are not in Neon and only "
+                           f"{queued} were queued (first missing: {', '.join(missing[:3])}). {json.dumps(out)}")
+    if left:
+        raise PublishError(f"{len(left)} stale summaries are still in Neon: {', '.join(left[:3])}")
+    return out
 
 
 def reload_server(say) -> None:
@@ -614,14 +659,25 @@ def main(argv=None) -> int:
 
     if args.only == "github":
         args.only = "__none__"
+    publishing = not args.dry_run and not args.no_publish and args.only in (None, "__none__")
+    if publishing:                                 # before an hour of indexing, not after
+        try:
+            memory_gate()
+        except PublishError as e:
+            say(f"not publishing: {e}")
+            return 2
     prj, stats = index(args, say)
     say("index: " + ", ".join(f"{k}={v:,}" for k, v in stats.items()))
+    github_read = False
     if not args.no_github and args.only in (None, "__none__"):
         try:
             repos = github_repos(say)
             attach_github(prj, repos, not args.dry_run, say)
+            github_read = True
         except Exception as e:
             say(f"  github skipped: {type(e).__name__}: {e}")
+    elif args.no_github:
+        say("  github skipped: --no-github")
     by_region = Counter(p["region"] for p in prj.by_key.values())
     say(f"projects: {len(prj.by_key)}  " + "  ".join(f"{k}={v}" for k, v in by_region.items()))
     if args.dry_run:
@@ -629,9 +685,13 @@ def main(argv=None) -> int:
             say(f"  [{p['region']}] {summary_line(p)[:150]}")
         return 0
     save_projects(prj)
-    if not args.no_publish and args.only in (None, "__none__"):
+    if publishing:
         say("publishing one summary per project to Flaxeon's shared memory…")
-        say("  " + json.dumps(publish(prj, say)))
+        try:
+            say("  " + json.dumps(publish(prj, say, github_read)))
+        except PublishError as e:
+            say(f"publish FAILED: {e}")
+            return 1
         reload_server(say)
     size = DB_PATH.stat().st_size / 1e9 if DB_PATH.exists() else 0
     say(f"done. index {DB_PATH} ({size:.2f} GB)")

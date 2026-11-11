@@ -43,9 +43,33 @@ Alternative considered: one star per file. Rejected, because 405,084 stars is no
 
 The current read-back samples five names through `load_document`, which can be satisfied by the local cache. The fix counts `repo_index` documents tagged `spark_sol_build` in Neon after writing, and fails the run loudly when that count differs from the number saved. When Neon is unavailable, writes queue as pending in Flaxeon's existing way, and the report says "queued", not "saved".
 
+### 4. Cause of the 2026-11-11 publish gap, and the fix
+
+Cause, found in task 4.1:
+- Flaxeon gates Neon and Firebase behind the operator passkey. In a fresh process, `core.passkey.cloud_allowed()` is false until the passkey is unlocked or `FLAXEON_PASSKEY` is set.
+- While the gate is closed, `memory_manager._backends()` returns `(None, None)`. So `save_document` and `forget_document` skip both stores and queue nothing. `memory/.pending_sync.json` did not exist.
+- `build.py` runs as its own process, so all 210 writes were dropped without an error.
+- The local cache got only one document. `save_document` puts a payload into the cache dict only when `_write_cache` is true, and `build.py` set that flag on the last item only (`ws_writing_prose`, last by key).
+- The five-name read-back went through `load_document` and was never checked against Neon.
+
+Fix, all in `build.py`:
+- `publish` refuses to start when `cloud_allowed()` is false. It names the two ways to open the gate (unlock in Flaxeon, or `FLAXEON_PASSKEY` in the environment of that one run) and exits non-zero.
+- It never opens Neon around the gate.
+- It puts every payload into the local cache itself.
+- After writing, it counts the `repo_index` documents tagged `spark_sol_build` in Neon and compares that count with the number saved, counting any writes queued as pending separately.
+
+A run that did not read GitHub, because of `--no-github` or because `gh` failed, keeps the summaries of GitHub-only repos (`gh_*`). A repo that was not seen in this run is not treated as gone. A `--no-github` run now says that it skipped GitHub.
+
+Verified 2026-11-11 with the passkey:
+- A full run published 212 summaries; all 212 were counted in Neon.
+- All 32 facts and 14 other documents were unchanged.
+- A throwaway project was published (213), then forgotten after its folder was deleted (212).
+
+Alternative considered: writing through `NeonStore` directly, as `read_memory.py` does for reads. Rejected, because it would bypass the operator's passkey for writes.
+
 ## Risks / Trade-offs
 
-- [The publish gap's cause is unknown] → Task 4.1 diagnoses it before anything is changed. Candidates: the writes went to Flaxeon's pending queue and were never flushed; a later Flaxeon sync rewrote the cache; or a forget pass removed them.
+- [Publishing needs the operator's passkey in that process] → The run is operator-started, and the passkey goes in that run's environment only. It is never written to a file or a log.
 - [Summaries quote READMEs] → They are scrubbed, capped at 1,600 characters of README, and stay inside the operator's own Neon. A public repo's README is public anyway. A private repo's README stays in the operator's store.
 - [The index is about 5 GB] → It stays local and ignored by git. Pruned folders and size caps keep it from growing with dependencies.
 - [Projects on the sky change the chart] → About 210 new stars in four regions. The galaxy already lays out regions, and the gesture rules treat a reload with more than one new star as playing nothing.
