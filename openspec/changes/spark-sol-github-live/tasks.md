@@ -6,4 +6,4 @@
 ## 2. Watch
 
 - [x] 2.1 Add the server's GitHub watch: a baseline first, an index run on a change, saving the seen state only after success, and logging failures. Verified with stubbed checks (5/5): a baseline only on the first check, a new repo triggers a run, a failed run is retried, and an offline check is logged.
-- [ ] 2.2 Real run. Remove one repo from `cache/github_seen.json` and restart the server. Verify that the watch notices the "new" repo, runs the indexer with the stored passkey, reaches exit 0 with every document counted in Neon, and writes the new seen state, and that `/health` reports the result.
+- [x] 2.2 Real run. Remove one repo from `cache/github_seen.json` and restart the server. Verify that the watch notices the "new" repo, runs the indexer with the stored passkey, reaches exit 0 with every document counted in Neon, and writes the new seen state, and that `/health` reports the result.
