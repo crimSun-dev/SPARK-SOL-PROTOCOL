@@ -1,0 +1,36 @@
+# Keeps Flaxeon's memory current with GitHub while the PC is off. Writes only the
+# summaries of repos that are not cloned on the PC (cloud_github.py). The log is
+# counts only: this repo is public, and so are its Action logs.
+name: GitHub to memory
+
+on:
+  schedule:
+    - cron: "17,47 * * * *"      # every 30 minutes; GitHub may start scheduled runs late
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-to-memory
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install --quiet "psycopg[binary]==3.2.3"
+      - name: Sync GitHub-only repos into Flaxeon's memory
+        env:
+          NEON_URL: ${{ secrets.NEON_URL }}
+          GH_READ_TOKENS: ${{ secrets.GH_READ_TOKENS }}
+        run: |
+          if [ -z "$NEON_URL" ] || [ -z "$GH_READ_TOKENS" ]; then
+            echo "NEON_URL or GH_READ_TOKENS is not set; nothing to do."; exit 0
+          fi
+          python cloud_github.py
