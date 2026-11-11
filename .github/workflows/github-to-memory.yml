@@ -29,6 +29,7 @@ jobs:
         env:
           NEON_URL: ${{ secrets.NEON_URL }}
           GH_READ_TOKENS: ${{ secrets.GH_READ_TOKENS }}
+          GH_OWNERS: K-nity
         run: |
           if [ -z "$NEON_URL" ] || [ -z "$GH_READ_TOKENS" ]; then
             echo "NEON_URL or GH_READ_TOKENS is not set; nothing to do."; exit 0

@@ -5,7 +5,10 @@ the PC: one `repo_index` document per repo (key `gh_<owner_repo>`), built with
 build.py's own summary code so the two never rewrite each other. Repos cloned
 on the PC have richer summaries from their files; those stay the PC's job.
 
-    NEON_URL=...  GH_READ_TOKENS="tok1 tok2"  python cloud_github.py [--dry-run]
+    NEON_URL=...  GH_READ_TOKENS="tok1 tok2"  GH_OWNERS="K-nity"  python cloud_github.py [--dry-run]
+
+A token failure turns every delete off for that run, so a partial listing can
+never make a repo look deleted.
 
 Without GH_READ_TOKENS it uses the gh CLI's own sign-in (for a local test).
 The log is counts only: the repo is public, and so are its Action logs.
@@ -25,6 +28,7 @@ import build  # noqa: E402
 
 DOCUMENT_TEXT_MAX = 48 * 1024          # Flaxeon's cap; over it, a pointer instead of text
 GITHUB_LINE = re.compile(r"^GitHub: (\S+) \(", re.M)
+OWNERS = tuple(os.environ.get("GH_OWNERS", "").split())   # organisations to list by name (e.g. K-nity)
 
 
 def payload_for(p: dict) -> dict:
@@ -53,7 +57,7 @@ def list_repos(tokens: list[str]) -> tuple[list[dict], set[str], int]:
         if tok:
             os.environ["GH_TOKEN"] = tok
         try:
-            for r in build.github_repos(lambda s: None):
+            for r in build.github_repos(lambda s: None, OWNERS):
                 repos[r["nameWithOwner"]] = r
                 owners.add(r["nameWithOwner"].split("/")[0].lower())
         except Exception:
@@ -108,7 +112,7 @@ def main(argv=None) -> int:
                                 (key, json.dumps(payload, ensure_ascii=False), datetime.now(timezone.utc)))
             for key, d in sorted(mine.items()):          # a GitHub-only repo that no longer exists
                 nwo = str(d.get("title") or "")
-                if (key.startswith("gh_") and key not in want and "/" in nwo
+                if (not failed and key.startswith("gh_") and key not in want and "/" in nwo
                         and nwo.split("/")[0].lower() in owners and nwo.lower() not in live):
                     deleted += 1
                     if not dry:

@@ -301,9 +301,13 @@ def gh_json(*args, timeout=120):
     return json.loads(r.stdout) if r.stdout.strip() else None
 
 
-def github_repos(say) -> list[dict]:
+def github_repos(say, extra_owners=()) -> list[dict]:
     me = gh_json("api", "user", "--jq", "{login: .login}")["login"]
-    owners = [me] + [o["login"] for o in (gh_json("api", "user/orgs") or [])]
+    try:                                           # a fine-grained token may not list organisations
+        orgs = [o["login"] for o in (gh_json("api", "user/orgs") or [])]
+    except RuntimeError:
+        orgs = []
+    owners = list(dict.fromkeys([me, *orgs, *extra_owners]))
     repos = []
     fields = ("nameWithOwner,description,primaryLanguage,pushedAt,url,isPrivate,isFork,isArchived,"
               "stargazerCount,defaultBranchRef,repositoryTopics,issues,pullRequests")
