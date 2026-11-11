@@ -29,6 +29,7 @@ import build  # noqa: E402
 
 DOCUMENT_TEXT_MAX = 48 * 1024          # Flaxeon's cap; over it, a pointer instead of text
 GITHUB_LINE = re.compile(r"^GitHub: (\S+) \(", re.M)
+COUNTS = re.compile(r", (\w+) issues, (\w+) pull requests$", re.M)
 OWNERS = tuple(os.environ.get("GH_OWNERS", "").split())   # organisations to list by name (e.g. K-nity)
 
 
@@ -97,8 +98,20 @@ def main(argv=None) -> int:
         cloned = {m.group(1) for n, d in mine.items() if not n.startswith("gh_")
                   for m in [GITHUB_LINE.search(str(d.get("text") or ""))] if m}
 
+        # A repo whose README this token cannot read keeps the PC's document (when there is one):
+        # a thinner summary would be rewritten back by the PC on its next run.
+        unknown = {r["nameWithOwner"] for r in repos if r.get("readme_unknown")}
         prj = build.Projects()
         build.attach_github(prj, [r for r in repos if r["nameWithOwner"] not in cloned], False, lambda s: None)
+        kept = 0
+        for key in [k for k, p in prj.by_key.items() if p["title"] in unknown and k in mine]:
+            del prj.by_key[key]
+            kept += 1
+        for p in prj.by_key.values():                # a token without Issues/Pull requests read sees no counts:
+            gh = p["github"]                         # keep the counts Neon already has, never write "None"
+            old = COUNTS.search(str((mine.get(p["key"]) or {}).get("text") or ""))
+            if old and gh.get("issues") is None and gh.get("pull_requests") is None:
+                gh["issues"], gh["pull_requests"] = (int(x) if x.isdigit() else None for x in old.groups())
         want = {p["key"]: payload_for(p) for p in prj.by_key.values()}
 
         written = unchanged = 0
@@ -118,7 +131,7 @@ def main(argv=None) -> int:
     print(("DRY RUN: " if dry else "") + json.dumps({
         "repos_listed": len(repos), "owners": len(owners), "token_failures": failed,
         "cloned_on_pc": len(cloned & {r["nameWithOwner"] for r in repos}), "github_only": len(want),
-        "written": written, "unchanged": unchanged}))
+        "written": written, "unchanged": unchanged, "kept_readme_unreadable": kept}))
     return 1 if failed else 0
 
 

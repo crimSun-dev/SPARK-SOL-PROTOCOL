@@ -325,8 +325,10 @@ def github_repos(say, extra_owners=()) -> list[dict]:
                                 "Accept: application/vnd.github.raw"], capture_output=True,
                                timeout=60, encoding="utf-8", errors="replace")
             r["readme"] = p.stdout if p.returncode == 0 else ""
+            # 404 is "no README"; anything else (403: the token cannot read contents) is "unknown"
+            r["readme_unknown"] = p.returncode != 0 and "HTTP 404" not in (p.stderr or "")
         except Exception:
-            r["readme"] = ""
+            r["readme"], r["readme_unknown"] = "", True
     return repos
 
 
