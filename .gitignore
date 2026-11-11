@@ -20,3 +20,6 @@ CLAUDE_BUILD_PROMPT.md
 cloud/.dev.vars
 cloud/.wrangler/
 cloud/node_modules/
+# What the operator fed Flaxeon to index: local paths.
+feeds.json
+feeds.json.tmp

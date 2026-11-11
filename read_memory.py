@@ -41,6 +41,8 @@ CATEGORIES = ("identity", "preferences", "projects",
 # Project summaries written by build.py (kind repo_index) get their own regions.
 INDEX_REGIONS = ("workspace", "pools", "experience", "skills")
 REGIONS = CATEGORIES + ("documents", "sessions", "captures") + INDEX_REGIONS
+# A category the operator gave a fed or moved project (feeds.py) is a region of its own.
+REGION_NAME = re.compile(r"^[a-z0-9][a-z0-9-]{0,23}$")
 
 # Never a star: the operator passkey row and the parent's machine state.
 NEVER = {"operator_passkey", "cloud_lock_token"}
@@ -284,8 +286,8 @@ def build_graph(facts, sessions, documents, captures=(), pack=None):
         # A build.py summary was scrubbed when it was written, and its name is a
         # folder name ("Secret Game Dev Flowchart"), so the name filter skips it.
         # Project summaries, skills and experience modules: every document build.py owns.
-        indexed = (doc.get("indexer") == "spark_sol_build"
-                   and doc.get("region") in INDEX_REGIONS and not from_pack)
+        indexed = (doc.get("indexer") == "spark_sol_build" and not from_pack
+                   and bool(REGION_NAME.match(str(doc.get("region") or ""))))
         if not indexed and SECRETISH.search(name):
             continue
         text = doc.get("text") or ""
@@ -319,6 +321,7 @@ def build_graph(facts, sessions, documents, captures=(), pack=None):
 
     links = _links(nodes)
     present = [r for r in REGIONS if any(n["group"] == r for n in nodes)]
+    present += sorted({n["group"] for n in nodes} - set(REGIONS))     # the operator's own categories
     return nodes, links, present
 
 

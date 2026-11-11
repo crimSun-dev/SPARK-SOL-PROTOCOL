@@ -17,6 +17,10 @@ path only. Re-runs are incremental by size and modification time.
     python build.py --no-github     # skip the gh calls
     python build.py --only workspace|pools|skills|github
 
+What the operator fed Flaxeon (feeds.json, see feeds.py) is indexed too: each feed
+is its own star in the category it was given, and a category entry moves an
+existing project to another region of the sky.
+
 Outbound hosts: api.github.com (through the gh CLI) and Flaxeon's Neon (and
 Firebase if configured) for the summaries. Nothing else.
 """
@@ -38,6 +42,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import feeds  # noqa: E402  (feeds.json: what the operator fed Flaxeon)
 PARENT = HERE.parent                                   # F.L.A.X.E.O.N
 WORKSPACE = PARENT.parent                              # G:\...\Workspace
 HOME = Path.home()
@@ -225,11 +231,24 @@ COURSE_DIR = re.compile(r"(course|class modules|modules)", re.I)
 class Projects:
     """Which project a file belongs to. One project = one Neon summary = one star."""
 
-    def __init__(self):
+    def __init__(self, fed: list[dict] | None = None):
         self.git_roots: dict[str, set[Path]] = {}
         self.by_key: dict[str, dict] = {}
+        # fed paths claim their files first, wherever they live; the deepest claim wins
+        self.claims = sorted(((Path(f["path"]), f) for f in fed or []), key=lambda c: -len(c[0].parts))
+
+    def claim_for(self, path: Path) -> dict | None:
+        for at, f in self.claims:
+            if path == at or at in path.parents:
+                key = "feed_" + slug(f["title"]) + "_" + hashlib.sha1(at.as_posix().lower().encode()).hexdigest()[:6]
+                return self._get("feed", f["title"], at, f["category"],
+                                 "fed file" if at.is_file() else "fed folder", key=key)
+        return None
 
     def project_for(self, kind: str, root: Path, path: Path) -> dict:
+        fed = self.claim_for(path)
+        if fed is not None:
+            return fed
         rel = path.relative_to(root)
         parts = rel.parts
         if kind == "workspace":
@@ -260,8 +279,8 @@ class Projects:
         label = f"{root.parent.name} {root.name}"     # ".claude skills" / ".claude plugins" / ".gemini skills"
         return self._get("skills", label, root, "skills", "skills root")
 
-    def _get(self, prefix: str, title: str, path: Path, region: str, kind: str) -> dict:
-        key = f"{prefix}_{slug(title)}"
+    def _get(self, prefix: str, title: str, path: Path, region: str, kind: str, key: str = "") -> dict:
+        key = key or f"{prefix}_{slug(title)}"
         p = self.by_key.get(key)
         if p is None:
             p = self.by_key[key] = {"key": key, "title": title, "path": str(path), "region": region,
@@ -374,6 +393,9 @@ def open_db() -> sqlite3.Connection:
 
 def walk(kind: str, root: Path, prj: Projects):
     git = prj.git_roots.setdefault(str(root), set())
+    if root.is_file():                             # a single fed file is its own root
+        yield root
+        return
     for dp, dns, fns in os.walk(root):
         d = Path(dp)
         if ".git" in dns and kind == "workspace":
@@ -391,12 +413,24 @@ def walk(kind: str, root: Path, prj: Projects):
             yield d / f
 
 
+def fed_roots(fed: list[dict]) -> list[tuple[str, Path]]:
+    """Feeds that no built-in root already walks become roots of their own."""
+    out = []
+    for f in fed:
+        at = Path(f["path"])
+        if at.exists() and not any(r == at or r in at.parents for _, r in ROOTS if r.is_dir()):
+            out.append(("feed", at))
+    return out
+
+
 def index(args, say) -> tuple[Projects, dict]:
-    prj = Projects()
+    reg = feeds.load()
+    prj = Projects(reg["feeds"])
     db = None if args.dry_run else open_db()
     stats = Counter()
     seen: set[str] = set()
-    roots = [(k, r) for k, r in ROOTS if r.is_dir() and (not args.only or args.only == k)]
+    roots = [(k, r) for k, r in ROOTS + fed_roots(reg["feeds"])
+             if (r.is_dir() or (k == "feed" and r.is_file())) and (not args.only or args.only == k)]
     t0 = time.time()
     for kind, root in roots:
         say(f"{kind}: {root}")
@@ -416,6 +450,8 @@ def index(args, say) -> tuple[Projects, dict]:
             p = prj.project_for(kind, root, path)
             ext = path.suffix.lower()
             rel = path.relative_to(Path(p["path"])) if Path(p["path"]) in path.parents else Path(name)
+            if p["kind"] == "fed file":                # its own star: the name is the whole listing
+                rel = Path(name)
             p["top"][rel.parts[0] if len(rel.parts) > 1 else "(files)"] += 1
             p["latest"] = max(p["latest"], st.st_mtime)
             if SECRET_FILE.search(name):
@@ -492,6 +528,13 @@ def index(args, say) -> tuple[Projects, dict]:
             key = f"ws_{slug(repo.relative_to(Path(root_key)).as_posix())}"
             if key in prj.by_key:
                 prj.by_key[key]["git"] = git_info(repo)
+    moved = 0
+    for p in prj.by_key.values():                  # the operator's categories win over the default region
+        cat = feeds.override_for(p["path"], reg)
+        if cat and cat != p["region"]:
+            p["region"], moved = cat, moved + 1
+    stats["feeds"] = len(reg["feeds"])
+    stats["moved"] = moved
     stats["seconds"] = round(time.time() - t0)
     return prj, stats
 
@@ -657,7 +700,8 @@ def summary_line(p: dict) -> str:
     what = {"git repo": "Git repo", "github repo": "GitHub repo (not cloned here)",
             "course folder": "Course folder", "pool course": "Pool course",
             "pool module": "Pool module", "pool": "Pool", "experience module": "Experience module",
-            "skills root": "Skills", "folder": "Folder"}.get(p["kind"], p["kind"])
+            "skills root": "Skills", "folder": "Folder",
+            "fed folder": "Folder fed to Flaxeon", "fed file": "File fed to Flaxeon"}.get(p["kind"], p["kind"])
     s = f"{what}: {p['title']}" + (f", {files:,} files" if files else "")
     return (s + (". " + desc if desc else "."))[:400]
 
@@ -735,8 +779,8 @@ def _indexed_in_neon(neon) -> set[str]:
 def documents_for(prj: Projects, skills: list[dict]):
     """(key, kind, text, source, summary, region, title) for everything published."""
     for p in sorted(prj.by_key.values(), key=lambda p: p["key"]):
-        if p["region"] == "experience":
-            yield p["key"], "experience", experience_text(p), p["path"], summary_line(p), "experience", p["title"]
+        if p["kind"] == "experience module":     # its text stays an experience text in any category
+            yield p["key"], "experience", experience_text(p), p["path"], summary_line(p), p["region"], p["title"]
         else:
             yield p["key"], "repo_index", summary_text(p), p["path"], summary_line(p), p["region"], p["title"]
     for sk in sorted(skills, key=lambda s: s["key"]):

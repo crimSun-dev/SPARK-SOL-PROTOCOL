@@ -28,6 +28,24 @@ The server answers it only for the `https://crimsun-dev.github.io` origin. A bro
 paired with the local page's WEB CODE can also ask. `?port=4701` points it at a second
 server on the same machine.
 
+## Feeding Flaxeon
+
+Tell Flaxeon to index something and it lands on the sky. Its `spark_protocol` tool runs
+`build.py`, then `cloud_sky.py`, in the background, and logs the outcome:
+
+- "index my workspace": a full, incremental run.
+- "index G:/Games/Ember" or "add my notes folder": a feed, sorted on its own. Sure signs
+  sort it first (a Godot, Unity, Unreal, LÖVE or Phaser project goes in games, a SKILL.md
+  in skills). Otherwise the model picks, and failing that the mix of file types.
+- "index G:/Games/Ember under games": a feed in the category you name.
+- "move Secret Game Dev to games": an indexed project changes region.
+- "what categories do you have".
+
+A category is any short name. A new one (games, music) becomes a new region of the sky,
+with its own colour, on the PC and on the web page. The registry is `feeds.json`
+(git-ignored: it holds local paths). It can also be edited with
+`python feeds.py list|add|categorize|remove`.
+
 ## With the PC off: the cloud copy
 
 When `127.0.0.1` does not answer, the page opens the cloud copy of Flaxeon's memory from

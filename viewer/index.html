@@ -394,18 +394,23 @@ function play(what) {
 <script type="module">
 import * as THREE from "./vendor/three/three.module.js";
 
-const DYES = {
+// A category the operator made (feeds.py: "games", "music") gets a chalk from the same
+// muted family, fixed by its name, and a name built from it ("board-games" -> "Board Games").
+const EXTRA_DYES = ["#a49a7c", "#8f9fb0", "#a58fa0", "#8fa69e", "#b09a86", "#98a0c0", "#a8a07a", "#9a8fb8"];
+const extraDye = (k) => { let h = 0; for (const c of k) h = (h * 31 + c.charCodeAt(0)) >>> 0; return EXTRA_DYES[h % EXTRA_DYES.length]; };
+const named = (t, f) => new Proxy(t, { get: (o, k) => typeof k !== "string" || k in o || !k ? o[k] : f(k) });
+const DYES = named({
   identity: "#c4b48a", preferences: "#b8a0c4", projects: "#8aa0b8", relationships: "#b8929a",
   wishes: "#c4a48a", notes: "#8eaa96", documents: "#8d99a6", sessions: "#7f93a8",
   // build.py project summaries: the four chalks the design spec left unused on this sky
   workspace: "#9aa57a", pools: "#b08968", experience: "#6f8f78", skills: "#a6847c",
-};
-const REGION_NAME = {
+}, extraDye);
+const REGION_NAME = named({
   identity: "Identity", preferences: "Preferences", projects: "Projects", relationships: "Relationships",
   wishes: "Wishes", notes: "Notes", documents: "Documents", sessions: "Sessions",
   captures: "Captures",
   workspace: "Workspace", pools: "Pools", experience: "Experience", skills: "Skills",
-};
+}, (k) => k.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" "));
 // Served by server.py, the page is the whole instrument. Served anywhere else (GitHub Pages),
 // it is a read-only window on this machine's server: it reads /graph and /health from
 // 127.0.0.1 and never asks, listens, speaks or posts. Nothing of the memory is in that copy.
