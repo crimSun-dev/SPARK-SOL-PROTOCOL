@@ -23,6 +23,7 @@ Firebase if configured) for the summaries. Nothing else.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -43,12 +44,20 @@ HOME = Path.home()
 INDEX_DIR = HERE / "index"
 DB_PATH = INDEX_DIR / "workspace.sqlite"
 
+CURSOR_POOL = HOME / ".cursor" / "skills" / "POOL"
+CLAUDE_POOL = HOME / ".claude" / "skills" / "POOL"   # mostly a copy: identical files are skipped
 ROOTS = [
     ("workspace", WORKSPACE),
-    ("pools", HOME / ".cursor" / "skills" / "POOL"),
+    ("pools", CURSOR_POOL),
+    ("pools", CLAUDE_POOL),
     ("skills", HOME / ".cursor" / "skills"),           # POOL pruned here; it is its own root
     ("skills", HOME / ".claude" / "skills"),
+    ("skills", HOME / ".claude" / "plugins"),
+    ("skills", HOME / ".gemini" / "skills"),
+    ("skills", HOME / ".codex" / "skills"),
+    ("skills", HOME / ".agents" / "skills"),
 ]
+SKILL_TEXT_MAX = 47 * 1024     # under Flaxeon's 48 KB DOCUMENT_TEXT_MAX, so the text is never dropped
 
 # ── what is never read ────────────────────────────────────────────────────
 PRUNE_DIRS = {"node_modules", "venv", ".venv", "env", ".git", "dist", "build", "__pycache__",
@@ -248,7 +257,7 @@ class Projects:
                 return self._get("pool", f"{top}/{course}", root / top / course, "pools", "pool course")
             return self._get("pool", top, root / top, "pools", "pool")
         # skills: one star per skills root
-        label = f"{root.parent.name} skills"          # ".claude skills" / ".cursor skills"
+        label = f"{root.parent.name} {root.name}"     # ".claude skills" / ".claude plugins" / ".gemini skills"
         return self._get("skills", label, root, "skills", "skills root")
 
     def _get(self, prefix: str, title: str, path: Path, region: str, kind: str) -> dict:
@@ -391,6 +400,13 @@ def index(args, say) -> tuple[Projects, dict]:
                 st = path.stat()
             except OSError:
                 continue
+            if kind == "pools" and root == CLAUDE_POOL:     # the .cursor POOL already holds this file
+                try:
+                    if (CURSOR_POOL / path.relative_to(root)).stat().st_size == st.st_size:
+                        stats["pool_twin_skipped"] += 1
+                        continue
+                except OSError:
+                    pass
             p = prj.project_for(kind, root, path)
             ext = path.suffix.lower()
             rel = path.relative_to(Path(p["path"])) if Path(p["path"]) in path.parents else Path(name)
@@ -501,6 +517,126 @@ def attach_github(prj: Projects, repos: list[dict], db_ok: bool, say) -> None:
         db.close()
 
 
+# ── skills and experience modules: one full document each ─────────────────
+FRONTMATTER = re.compile(r"\A﻿?---\s*\r?\n(.*?)\r?\n---", re.S)
+
+
+def _front(text: str, field: str) -> str:
+    m = FRONTMATTER.match(text or "")
+    f = re.search(rf"^{field}:\s*(.+)$", m.group(1), re.M) if m else None
+    return f.group(1).strip().strip("'\"") if f else ""
+
+
+def _keep_dir(parent: Path, name: str, root: Path) -> bool:
+    return not (name in PRUNE_DIRS or name.startswith(".") or (parent == root and name == "POOL"))
+
+
+def find_skills() -> list[dict]:
+    """Every folder with a SKILL.md under the skill roots, outside pruned folders.
+    Identical copies (same SKILL.md and same reference names and sizes) are one
+    skill that lists every location. Keys: skill_<name>, then a root suffix, then a
+    short hash, so a different skill with the same name never overwrites another."""
+    by_hash: dict[str, dict] = {}
+    out: list[dict] = []
+    for kind, root in ROOTS:
+        if kind != "skills" or not root.is_dir():
+            continue
+        for dp, dns, fns in os.walk(root):
+            d = Path(dp)
+            dns[:] = sorted(n for n in dns if _keep_dir(d, n, root))
+            if "SKILL.md" not in fns:
+                continue
+            try:
+                main = read_text(d / "SKILL.md")
+            except OSError:
+                continue
+            refs = []
+            for rp, rdns, rfns in os.walk(d):
+                r = Path(rp)
+                rdns[:] = sorted(n for n in rdns if _keep_dir(r, n, root) and not (r / n / "SKILL.md").exists())
+                refs += [r / f for f in sorted(rfns) if f.lower().endswith(".md")
+                         and not (r == d and f == "SKILL.md") and not SECRET_FILE.search(f)]
+            ident = hashlib.sha1(main.encode("utf-8", "replace"))
+            for r in refs:
+                try:
+                    ident.update(f"{r.relative_to(d).as_posix()}:{r.stat().st_size}".encode())
+                except OSError:
+                    pass
+            h = ident.hexdigest()
+            if h in by_hash:
+                by_hash[h]["also"].append(str(d))
+                continue
+            sk = {"name": _front(main, "name") or d.name, "desc": _front(main, "description"),
+                  "path": str(d), "root": root, "main": main, "refs": refs, "also": []}
+            by_hash[h] = sk
+            out.append(sk)
+    taken: set[str] = set()
+    for sk in out:
+        base = f"skill_{slug(sk['name'])}"
+        key = base
+        if key in taken:
+            key = f"{base}_{slug(sk['root'].parent.name + '_' + sk['root'].name)}"
+        if key in taken:
+            key = f"{base}_{hashlib.sha1(sk['path'].encode()).hexdigest()[:6]}"
+        taken.add(key)
+        sk["key"] = key
+    return out
+
+
+def _fill(head: str, first: str, parts: list[tuple[str, Path]], cut_note: str) -> str:
+    """head + first, then each part while it fits under SKILL_TEXT_MAX; the rest named."""
+    body = head + scrub(first)
+    omitted = []
+    for label, path in parts:
+        try:
+            block = f"\n\n## {label}\n\n" + scrub(read_text(path))
+        except OSError:
+            continue
+        if len((body + block).encode("utf-8")) + 1024 <= SKILL_TEXT_MAX:
+            body += block
+        else:
+            omitted.append(label)
+    if omitted:
+        body += "\n\nNot included (over the size limit): " + ", ".join(omitted)
+    if len(body.encode("utf-8")) > SKILL_TEXT_MAX:
+        body = body.encode("utf-8")[:SKILL_TEXT_MAX - 200].decode("utf-8", "ignore") + "\n\n" + cut_note
+    return body
+
+
+def skill_text(sk: dict) -> str:
+    head = "\n".join([f"# {sk['name']}", "", f"Skill at: {sk['path']}",
+                      *[f"Also at: {a}" for a in sk["also"]], "", ""])
+    d = Path(sk["path"])
+    return _fill(head, sk["main"], [(r.relative_to(d).as_posix(), r) for r in sk["refs"]],
+                 "[cut at the size limit]")
+
+
+def skill_summary(sk: dict) -> str:
+    desc = " ".join((sk["desc"] or "").split())
+    if not desc:
+        body = FRONTMATTER.sub("", sk["main"], count=1)
+        desc = next((" ".join(b.split()).lstrip("# ") for b in body.split("\n\n")
+                     if len(b.strip()) > 12 and not b.strip().startswith(("<", "!", "[", "```"))), "")
+    return scrub(f"Skill: {sk['name']}. {desc}")[:400]
+
+
+def experience_text(p: dict) -> str:
+    root = Path(p["path"])
+    files = [root] if root.is_file() else sorted(
+        (Path(dp) / f for dp, dns, fns in os.walk(root) for f in fns
+         if f.lower().endswith((".md", ".txt"))), key=lambda x: x.as_posix().lower())
+    if not files:
+        return summary_text(p)
+    head = f"# {p['title']}\n\nExperience module at: {p['path']}\n\n"
+    first, rest = files[0], files[1:]
+    try:
+        first_text = read_text(first)
+    except OSError:
+        return summary_text(p)
+    return _fill(head, first_text, [(f.relative_to(root).as_posix() if root.is_dir() else f.name, f) for f in rest],
+                 "[cut at the size limit]")
+
+
 # ── summaries: what Flaxeon's shared memory gets ──────────────────────────
 def summary_line(p: dict) -> str:
     gh = p.get("github") or {}
@@ -585,11 +721,23 @@ def memory_gate():
 
 
 def _indexed_in_neon(neon) -> set[str]:
+    """Every document this indexer owns: project summaries, skills, experience modules."""
     return {name for name, d in neon.load_documents().items()
-            if isinstance(d, dict) and d.get("kind") == "repo_index" and d.get("indexer") == "spark_sol_build"}
+            if isinstance(d, dict) and d.get("indexer") == "spark_sol_build"}
 
 
-def publish(prj: Projects, say, github_read: bool = True) -> dict:
+def documents_for(prj: Projects, skills: list[dict]):
+    """(key, kind, text, source, summary, region, title) for everything published."""
+    for p in sorted(prj.by_key.values(), key=lambda p: p["key"]):
+        if p["region"] == "experience":
+            yield p["key"], "experience", experience_text(p), p["path"], summary_line(p), "experience", p["title"]
+        else:
+            yield p["key"], "repo_index", summary_text(p), p["path"], summary_line(p), p["region"], p["title"]
+    for sk in sorted(skills, key=lambda s: s["key"]):
+        yield sk["key"], "skill", skill_text(sk), sk["path"], skill_summary(sk), "skills", sk["name"]
+
+
+def publish(prj: Projects, say, github_read: bool = True, skills: list[dict] | None = None) -> dict:
     """One repo_index document per project into Flaxeon's shared memory, through
     the parent's own save_document. Documents this indexer published before and
     no longer has are forgotten. Nothing else in the store is touched. The result
@@ -598,21 +746,30 @@ def publish(prj: Projects, say, github_read: bool = True) -> dict:
     from tools.memory_ingest import build_payload
     db = open_db()
     row = db.execute("SELECT v FROM meta WHERE k='published'").fetchone()
-    was_in_neon = _indexed_in_neon(neon)          # what earlier runs really wrote
+    current = {n: d for n, d in neon.load_documents().items()
+               if isinstance(d, dict) and d.get("indexer") == "spark_sol_build"}
+    was_in_neon = set(current)                    # what earlier runs really wrote
     before = (set(json.loads(row[0])) if row else set()) | was_in_neon
     pending0 = len(mm._load_pending())
     names = []
     cache = mm._load_local()
-    items = sorted(prj.by_key.values(), key=lambda p: p["key"])
-    for i, p in enumerate(items):
-        payload = build_payload(p["key"], "repo_index", summary_text(p), source=p["path"],
-                                summary=summary_line(p))
-        payload.update(region=p["region"], title=p["title"], indexer="spark_sol_build")
-        cache[p["key"]] = payload                  # Flaxeon fills the cache dict only on a write
-        mm.save_document(p["key"], payload, _memory=cache, _write_cache=(i == len(items) - 1))
-        names.append(p["key"])
-        if (i + 1) % 50 == 0:
-            say(f"  … {i + 1}/{len(items)} summaries saved")
+    items = list(documents_for(prj, skills or []))
+    pointers = unchanged = 0
+    same = lambda a, b: isinstance(b, dict) and {k: v for k, v in a.items() if k != "updated"} ==         {k: v for k, v in b.items() if k != "updated"}
+    for i, (key, kind, text, source, summary, region, title) in enumerate(items):
+        payload = build_payload(key, kind, text, source=source, summary=summary)
+        pointers += "pointer" in payload
+        payload.update(region=region, title=title, indexer="spark_sol_build")
+        names.append(key)
+        if same(payload, current.get(key)):          # already in Neon as is: no write, no new timestamp
+            cache[key] = current[key]
+            unchanged += 1
+            continue
+        cache[key] = payload                       # Flaxeon fills the cache dict only on a write
+        mm.save_document(key, payload, _memory=cache, _write_cache=False)
+        if (i + 1) % 100 == 0:
+            say(f"  … {i + 1}/{len(items)} documents checked")
+    mm._write_local(cache)                         # Flaxeon's offline copy, once
     stale = before - set(names)
     if not github_read:                           # not seen this run is not gone: keep GitHub-only repos
         stale = {n for n in stale if not n.startswith("gh_")}
@@ -627,9 +784,10 @@ def publish(prj: Projects, say, github_read: bool = True) -> dict:
                (json.dumps(sorted(set(names) & in_neon)),))
     db.commit()
     db.close()
-    out = {"saved": len(names) - len(missing), "queued": queued,
+    out = {"saved": len(names) - len(missing), "written": len(names) - unchanged, "unchanged": unchanged,
+           "queued": queued,
            "forgotten": len(set(stale) & was_in_neon) - len(left),
-           "in_neon": len(in_neon), "expected": len(names)}
+           "in_neon": len(in_neon), "expected": len(names), "text_dropped_to_pointer": pointers}
     if missing and len(missing) > queued:
         raise PublishError(f"{len(missing)} of {len(names)} summaries are not in Neon and only "
                            f"{queued} were queued (first missing: {', '.join(missing[:3])}). {json.dumps(out)}")
@@ -659,7 +817,18 @@ def main(argv=None) -> int:
 
     if args.only == "github":
         args.only = "__none__"
-    publishing = not args.dry_run and not args.no_publish and args.only in (None, "__none__")
+    if not args.dry_run:                           # one writer at a time: a manual run and the GitHub watch
+        INDEX_DIR.mkdir(parents=True, exist_ok=True)
+        lock = open(INDEX_DIR / "build.lock", "a+")
+        try:
+            import msvcrt
+            msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
+        except OSError:
+            say("another build.py run is writing the index; try again when it ends")
+            return 3
+        except ImportError:
+            pass
+    publishing =not args.dry_run and not args.no_publish and args.only in (None, "__none__")
     if publishing:                                 # before an hour of indexing, not after
         try:
             memory_gate()
@@ -680,6 +849,10 @@ def main(argv=None) -> int:
         say("  github skipped: --no-github")
     by_region = Counter(p["region"] for p in prj.by_key.values())
     say(f"projects: {len(prj.by_key)}  " + "  ".join(f"{k}={v}" for k, v in by_region.items()))
+    skills = find_skills() if args.only in (None, "skills", "__none__") else []
+    copies = sum(len(s["also"]) for s in skills)
+    say(f"skills: {len(skills)} distinct ({copies} identical copies merged) from "
+        + ", ".join(str(r) for k, r in ROOTS if k == "skills" and r.is_dir()))
     if args.dry_run:
         for p in sorted(prj.by_key.values(), key=lambda p: (p["region"], p["title"].lower())):
             say(f"  [{p['region']}] {summary_line(p)[:150]}")
@@ -688,7 +861,7 @@ def main(argv=None) -> int:
     if publishing:
         say("publishing one summary per project to Flaxeon's shared memory…")
         try:
-            say("  " + json.dumps(publish(prj, say, github_read)))
+            say("  " + json.dumps(publish(prj, say, github_read, skills)))
         except PublishError as e:
             say(f"publish FAILED: {e}")
             return 1

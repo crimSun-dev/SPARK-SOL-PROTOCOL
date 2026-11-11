@@ -44,7 +44,7 @@ REGIONS = CATEGORIES + ("documents", "sessions", "captures") + INDEX_REGIONS
 
 # Never a star: the operator passkey row and the parent's machine state.
 NEVER = {"operator_passkey", "cloud_lock_token"}
-MACHINE_STATE = {"monitors", "pushup_sessions", "reminders"}
+MACHINE_STATE = {"monitors", "pushup_sessions", "reminders", "forgotten_facts"}
 SECRETISH = re.compile(r"(passkey|api[_-]?key|secret|credential|token|password)", re.I)
 SCRUB = [
     re.compile(r"postgres(?:ql)?://\S+", re.I),
@@ -283,7 +283,8 @@ def build_graph(facts, sessions, documents, captures=(), pack=None):
             continue
         # A build.py summary was scrubbed when it was written, and its name is a
         # folder name ("Secret Game Dev Flowchart"), so the name filter skips it.
-        indexed = (doc.get("kind") == "repo_index" and doc.get("indexer") == "spark_sol_build"
+        # Project summaries, skills and experience modules: every document build.py owns.
+        indexed = (doc.get("indexer") == "spark_sol_build"
                    and doc.get("region") in INDEX_REGIONS and not from_pack)
         if not indexed and SECRETISH.search(name):
             continue

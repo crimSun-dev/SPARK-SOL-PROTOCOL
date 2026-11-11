@@ -14,6 +14,8 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
+import secrets
 import http.server
 import json
 import math
@@ -533,6 +535,88 @@ def reload_sky(loader=None) -> dict:
             "sky_rev": STATE["sky_rev"]}
 
 
+# ── GitHub watch: new, deleted or pushed repos reach Flaxeon without a hand ──
+GITHUB_SEEN = HERE / "cache" / "github_seen.json"
+GITHUB_LOG = HERE / "cache" / "github_watch.log"
+GITHUB = {"checked_at": None, "repos": None, "last_run": None, "last_result": None, "running": False}
+
+
+def _gh_json(*args):
+    import subprocess
+    p = subprocess.run(["gh", *args], capture_output=True, text=True, encoding="utf-8",
+                       errors="replace", timeout=120)
+    if p.returncode != 0:
+        raise RuntimeError((p.stderr or p.stdout).strip()[:200])
+    return json.loads(p.stdout or "null")
+
+
+def github_print() -> dict:
+    """{nameWithOwner: pushedAt} for the signed-in account and its organisations."""
+    me = _gh_json("api", "user", "--jq", "{login: .login}")["login"]
+    owners = [me] + [o["login"] for o in (_gh_json("api", "user/orgs") or [])]
+    out = {}
+    for owner in owners:
+        for r in _gh_json("repo", "list", owner, "--limit", "1000", "--json", "nameWithOwner,pushedAt") or []:
+            out[r["nameWithOwner"]] = r.get("pushedAt")
+    return out
+
+
+def _log_github(line: str) -> None:
+    with contextlib.suppress(OSError):
+        GITHUB_LOG.parent.mkdir(parents=True, exist_ok=True)
+        with GITHUB_LOG.open("a", encoding="utf-8") as f:
+            f.write(f"{datetime.now().isoformat(timespec='seconds')} {line}\n")
+
+
+def run_indexer() -> tuple[int, str]:
+    """One build.py run with the stored passkey in its environment only."""
+    import os, subprocess
+    import passkey_store
+    key = passkey_store.load()
+    if not key:
+        return 2, "no passkey store (cache/passkey.dpapi): GitHub changed, publish pending"
+    env = {k: v for k, v in os.environ.items() if not k.startswith(("FLAXEON_", "TEMPEST_SOL_"))}
+    env.update(FLAXEON_PASSKEY=key, PYTHONIOENCODING="utf-8")
+    p = subprocess.run([sys.executable, str(HERE / "build.py")], cwd=HERE, env=env, capture_output=True,
+                       text=True, encoding="utf-8", errors="replace", timeout=3600)
+    tail = [l for l in p.stdout.splitlines() if l.lstrip().startswith(("{", "publish FAILED", "not publishing",
+                                                                         "another build", "projects:", "skills:"))]
+    return p.returncode, " | ".join(tail)[-600:]
+
+
+def watch_github(stop: threading.Event, every: float) -> None:
+    """Every `every` seconds, compare the repos and their push times with what was
+    last indexed. On a difference, run the indexer, which publishes and reloads
+    the sky. The first check after a fresh install only records the baseline."""
+    while True:
+        try:
+            now = github_print()
+            GITHUB.update(checked_at=time.time(), repos=len(now))
+            try:
+                seen = json.loads(GITHUB_SEEN.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                seen = None
+            if seen is None:
+                GITHUB_SEEN.parent.mkdir(parents=True, exist_ok=True)
+                GITHUB_SEEN.write_text(json.dumps(now, indent=1), encoding="utf-8")
+                _log_github(f"baseline: {len(now)} repos")
+            elif now != seen and not STATE["shutting_down"]:
+                added = sorted(set(now) - set(seen)); gone = sorted(set(seen) - set(now))
+                pushed = sorted(k for k in now if k in seen and now[k] != seen[k])
+                _log_github(f"changed: +{added} -{gone} pushed {pushed[:10]}; indexing")
+                GITHUB.update(running=True)
+                code, tail = run_indexer()
+                GITHUB.update(running=False, last_run=time.time(), last_result=f"exit {code}: {tail}")
+                _log_github(f"indexer exit {code}: {tail}")
+                if code == 0:
+                    GITHUB_SEEN.write_text(json.dumps(now, indent=1), encoding="utf-8")
+        except Exception as e:                     # gh offline, signed out, timed out: try again next time
+            GITHUB.update(running=False, last_result=f"check failed: {type(e).__name__}: {str(e)[:160]}")
+            _log_github(GITHUB["last_result"])
+        if stop.wait(every):
+            return
+
+
 def _sky_print(graph: dict) -> str:
     """What a viewer would draw: nodes, links, regions. Not the read time."""
     pub = read_memory.public_graph(graph)
@@ -728,6 +812,45 @@ ALLOWED_ORIGINS = {f"http://{HOST}:{PORT}", f"http://localhost:{PORT}"}
 # machine's server and nothing else: no /chat, no /remember, no POST of any kind.
 WEB_VIEWER_ORIGINS = {"https://crimsun-dev.github.io"}
 WEB_VIEWER_PATHS = {"/graph", "/health", "/search"}
+# A paired web viewer may also ask. Pairing takes the code the local page shows;
+# asking takes the token pairing returned. No other POST is open to the web.
+WEB_POST_PATHS = {"/pair", "/chat"}
+WEB_TOKENS = HERE / "cache" / "web_tokens.json"       # SHA-256 of each token; delete to unpair all
+PAIR = {"code": "", "misses": 0}
+PAIR_LOCK = threading.Lock()
+
+
+def new_pair_code() -> None:
+    PAIR["code"], PAIR["misses"] = f"{secrets.randbelow(10 ** 6):06d}", 0
+
+
+def _token_hashes() -> set[str]:
+    try:
+        return set(json.loads(WEB_TOKENS.read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        return set()
+
+
+def token_ok(token: str | None) -> bool:
+    return bool(token) and hashlib.sha256(token.encode()).hexdigest() in _token_hashes()
+
+
+def pair(code: str) -> str | None:
+    """A token for the right code. Five misses, or one success, replace the code."""
+    with PAIR_LOCK:
+        if not PAIR["code"]:
+            new_pair_code()
+        if not secrets.compare_digest(str(code or "").strip(), PAIR["code"]):
+            PAIR["misses"] += 1
+            if PAIR["misses"] >= 5:
+                new_pair_code()
+            return None
+        token = secrets.token_urlsafe(32)
+        hashes = _token_hashes() | {hashlib.sha256(token.encode()).hexdigest()}
+        WEB_TOKENS.parent.mkdir(parents=True, exist_ok=True)
+        WEB_TOKENS.write_text(json.dumps(sorted(hashes)), encoding="utf-8")
+        new_pair_code()
+        return token
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -765,7 +888,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
-        for k, v in (headers or {}).items():
+        for k, v in {**getattr(self, "_cors", {}), **(headers or {})}.items():
             self.send_header(k, v)
         self.end_headers()
         self.wfile.write(body)
@@ -782,20 +905,25 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         except ValueError:
             return {}
 
-    def _web_viewer(self, path: str) -> dict:
-        """CORS headers for the read-only web viewer, or none."""
+    def _web_viewer(self, path: str, post: bool = False) -> dict:
+        """CORS headers for the web viewer on the routes it may use, or none."""
         o = self.headers.get("Origin")
-        if o not in WEB_VIEWER_ORIGINS or path not in WEB_VIEWER_PATHS:
+        if o not in WEB_VIEWER_ORIGINS or path not in (WEB_POST_PATHS if post else WEB_VIEWER_PATHS):
             return {}
         return {"Access-Control-Allow-Origin": o, "Vary": "Origin"}
 
-    def do_OPTIONS(self):                       # preflight: the web viewer's two GETs only
-        h = self._web_viewer(urlsplit(self.path).path)
+    def do_OPTIONS(self):                       # preflight: the web viewer's GETs, /pair and /chat
+        self._cors = {}
+        path = urlsplit(self.path).path
+        post = path in WEB_POST_PATHS
+        h = self._web_viewer(path, post)
         if not h:
             return self._send(403, {"error": "origin not allowed"})
-        h.update({"Access-Control-Allow-Methods": "GET",
+        h.update({"Access-Control-Allow-Methods": "POST" if post else "GET",
                   "Access-Control-Allow-Private-Network": "true",
                   "Access-Control-Max-Age": "600"})
+        if post:
+            h["Access-Control-Allow-Headers"] = "Content-Type, X-Spark-Token"
         return self._send(204, body=b"", headers=h)
 
     def _origin_ok(self) -> bool:
@@ -803,6 +931,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         return o is None or o in ALLOWED_ORIGINS
 
     def do_GET(self):
+        self._cors = {}
         u = urlsplit(self.path)
         web = self._web_viewer(u.path)
         if u.path == "/health":                 # the web viewer never claims the boot line
@@ -812,6 +941,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 public = read_memory.public_graph(GRAPH)
             return self._send(200, {**public, "sky_rev": STATE["sky_rev"],
                                     "mem_rev": STATE["mem_rev"]}, headers=web)
+        if u.path == "/pair/code":              # the local page only: no CORS, loopback, own origin
+            o = self.headers.get("Origin")
+            if not self._loopback() or (o is not None and o not in ALLOWED_ORIGINS) or web:
+                return self._send(403, {"error": "local page only"})
+            with PAIR_LOCK:
+                if not PAIR["code"]:
+                    new_pair_code()
+                return self._send(200, {"code": PAIR["code"], "paired": len(_token_hashes())})
         if u.path == "/search":                 # read-only file search for the find box
             q = (parse_qs(u.query).get("q") or [""])[0]
             with LOCK:
@@ -834,9 +971,19 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         self._body_read = False                 # per request: the handler serves a whole connection
-        if not self._origin_ok():
-            return self._send(403, {"error": "origin not allowed"})
+        self._cors = {}
         u = urlsplit(self.path)
+        if self.headers.get("Origin") in WEB_VIEWER_ORIGINS:
+            self._cors = self._web_viewer(u.path, post=True)
+            if not self._cors:                  # every other POST stays closed to the web
+                return self._send(403, {"error": "origin not allowed"})
+            if u.path == "/pair":
+                token = pair(str(self._json_body().get("code") or ""))
+                return self._send(200, {"token": token}) if token else self._send(403, {"error": "wrong code"})
+            if not token_ok(self.headers.get("X-Spark-Token")):
+                return self._send(401, {"error": "not paired"})
+        elif not self._origin_ok():
+            return self._send(403, {"error": "origin not allowed"})
         try:
             if u.path in ("/reload", "/shutdown") and not self._loopback():
                 return self._send(403, {"error": "loopback only"})
@@ -921,6 +1068,9 @@ def health(q: dict | None = None) -> dict:
     v = {k: v.get(k) for k in ("status", "engine", "model_id", "profile", "error")}
     return {**badge(), "voice_bay": v, "hearing": h, "note_count": len(GRAPH["nodes"]),
             "mem_rev": STATE["mem_rev"],
+            "github": {"repos": GITHUB["repos"], "checked_at": GITHUB["checked_at"],
+                       "running": GITHUB["running"], "last_run": GITHUB["last_run"],
+                       "last_result": (GITHUB["last_result"] or "")[:160]},
             "source": GRAPH.get("source"), "boot_line": boot_line,
             "constants": {"SILENCE_MS": getattr(hear, "SILENCE_MS", 700),
                           "FINISH_MS": getattr(hear, "FINISH_MS", 900),
@@ -934,6 +1084,8 @@ def main() -> int:
     ap.add_argument("--port", type=int, default=PORT)
     ap.add_argument("--watch", type=float, default=60.0,
                     help="seconds between Neon re-reads for the live sky (0 turns the watch off)")
+    ap.add_argument("--github-watch", type=float, default=600.0,
+                    help="seconds between GitHub checks that re-run the indexer on a change (0 turns it off)")
     args = ap.parse_args()
     ARGS["mirror_only"] = bool(args.mirror_only)
     assert len(PERSONA.split()) < 300, "PERSONA must stay under 300 words"
@@ -973,6 +1125,9 @@ def main() -> int:
     if args.watch > 0 and not args.no_read and not args.mirror_only:
         threading.Thread(target=watch_memory, args=(stop, max(10.0, args.watch)), daemon=True,
                          name="spark-memory-watch").start()
+    if args.github_watch > 0 and not args.no_read and not args.mirror_only:
+        threading.Thread(target=watch_github, args=(stop, max(60.0, args.github_watch)), daemon=True,
+                         name="spark-github-watch").start()
     if hear:
         threading.Thread(target=hear.load_models, args=(CFG.get("hearing", {}),), daemon=True).start()
     else:

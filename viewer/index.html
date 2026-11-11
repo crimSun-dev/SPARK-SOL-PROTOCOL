@@ -353,6 +353,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   <div class="words">
     <button class="word" id="handsfree" type="button" aria-disabled="true" aria-pressed="false" title="Needs the server's ears">HANDS-FREE OFF</button>
     <button class="word ptt" id="ptt" type="button" aria-disabled="true" title="Needs the server's ears">HOLD TO TALK</button>
+    <button class="word" id="webcode" type="button" title="Show the code that pairs the web viewer with this machine">WEB CODE</button>
   </div>
   <label class="ask">
     <span class="sr-only">Ask the notes</span>
@@ -912,8 +913,34 @@ function postHosts() {
 }
 
 function api(path, body, raw) {
-  return fetch(path, { method: "POST", headers: { "Content-Type": raw ? "audio/wav" : "application/json" },
-    body: raw ? body : JSON.stringify(body) });
+  const headers = { "Content-Type": raw ? "audio/wav" : "application/json" };
+  if (REMOTE && webToken()) headers["X-Spark-Token"] = webToken();
+  return fetch(API + path, { method: "POST", headers, body: raw ? body : JSON.stringify(body) });
+}
+
+// ── the web viewer's pairing: a token from the code the local page shows ──
+const TOKEN_KEY = "spark-sol-web-token";
+function webToken() { try { return localStorage.getItem(TOKEN_KEY) || ""; } catch { return ""; } }
+function saveToken(t) { try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch {} askMode(); }
+function webLabel() { return webToken() ? "LIVE · PAIRED" : "LIVE · READ ONLY"; }
+function askMode() {
+  if (!REMOTE) return;
+  ask.placeholder = webToken() ? "Ask the notes" : "Pair: type the WEB CODE from the local page";
+  ask.title = webToken() ? "" : "The local SPARK SOL page shows the code under WEB CODE";
+}
+async function pairWith(code) {
+  code = code.replace(/\s+/g, "");
+  if (!/^\d{6}$/.test(code)) {
+    setAnswer("Type the six-digit WEB CODE from the local SPARK SOL page to pair this browser.", true); return;
+  }
+  try {
+    const r = await fetch(API + "/pair", { method: "POST", headers: { "Content-Type": "application/json" },
+                                           body: JSON.stringify({ code }) });
+    const d = await r.json();
+    if (d.token) { saveToken(d.token); setAnswer("Paired. This browser can ask now."); }
+    else setAnswer("That code was not right. Five misses replace the code.", true);
+  } catch { setAnswer("SPARK SOL did not answer.", true); }
+  reading("activity", webLabel(), "live");
 }
 
 // ── health: voice, ears, brain ────────────────────────────────────────
@@ -945,7 +972,8 @@ async function pollHealth(claim) {
   if (REMOTE) {                    // read-only: follow every memory change, draw nothing else
     if (up && HEALTH.mem_rev !== memRev) { memRev = HEALTH.mem_rev; swapSky(); }
     if (!up) memRev = undefined;   // the server came back: read the whole sky again
-    reading("activity", up ? "LIVE · READ ONLY" : "SPARK SOL is not running on this machine", up ? "live" : "warn");
+    ask.disabled = !up;
+    if (!turnBusy) reading("activity", up ? webLabel() : "SPARK SOL is not running on this machine", up ? "live" : "warn");
     return HEALTH;
   }
   if (up) noteRev(HEALTH.sky_rev);
@@ -998,6 +1026,7 @@ async function fetchChunk(text, i, log) {
 }
 let speakToken = 0;
 async function speak(text, b) {
+  if (REMOTE) { if (!turnBusy) reading("activity", webLabel(), "live"); return; }   // the web viewer answers in text
   const chunks = splitChunks(text);
   if (!chunks.length) return;
   const token = ++speakToken;
@@ -1047,11 +1076,18 @@ function showCited(ids) {
 async function turn(text, heardSecs) {
   text = (text || "").trim();
   if (!text || turnBusy) return;
+  if (REMOTE && !webToken()) return pairWith(text);
   stopSpeaking(); turnBusy = true;
   reading("activity", "THINKING", "");
   const t0 = performance.now();
   let d;
-  try { d = await (await api("/chat", { text })).json(); }
+  try {
+    const r = await api("/chat", { text });
+    if (REMOTE && r.status === 401) {
+      saveToken("");
+      d = { answer: "This browser is not paired. Type the WEB CODE from the local page.", nodes: [], error: "not paired" };
+    } else d = await r.json();
+  }
   catch { d = { answer: "The server did not answer.", nodes: [], error: "no server" }; }
   window.__spark.turns.push({ text, heardSecs, thinkMs: performance.now() - t0, answer: d.answer, nodes: d.nodes });
   turnBusy = false;
@@ -1154,7 +1190,7 @@ async function swapSky() {
     $("count").textContent = nodes.length.toLocaleString("en");
     $("count-word").textContent = nodes.length === 1 ? "note" : "notes";
     setFloor(); voiceReading(); earsReading();
-    if (REMOTE) { reading("voiceread", "", ""); reading("ears", "", ""); reading("activity", "LIVE · READ ONLY", "live"); }
+    if (REMOTE) { reading("voiceread", "", ""); reading("ears", "", ""); reading("activity", webLabel(), "live"); }
     if (firstSky && nodes.length) { framed = false; setTimeout(frameFirst, 900); }
     skyRev = g.sky_rev;
   })();
@@ -1437,9 +1473,24 @@ document.addEventListener("keydown", (e) => {
 });
 window.__spark.findStars = findStars;
 
+// ── WEB CODE: the local page shows the code that pairs the web viewer ──
+let codeTimer = 0;
+$("webcode").addEventListener("click", async () => {
+  if (REMOTE) return;
+  let d;
+  try { d = await (await fetch("/pair/code", { cache: "no-store" })).json(); } catch { d = null; }
+  clearTimeout(codeTimer);
+  badgeEl.textContent = d && d.code
+    ? `WEB CODE ${d.code.slice(0, 3)} ${d.code.slice(3)}  ·  type it into the web viewer's ask line  ·  ${d.paired} paired`
+    : "The pairing code did not load.";
+  badgeEl.hidden = false;
+  codeTimer = setTimeout(() => { badgeEl.hidden = true; }, 60000);
+});
+
 // ── boot ──────────────────────────────────────────────────────────────
 if (REMOTE) {                      // the web viewer: no ask line, no ears, no voice
-  for (const el of [ask, hfBtn, pttBtn]) { el.hidden = true; el.disabled = true; el.setAttribute("aria-disabled", "true"); }
+  for (const el of [hfBtn, pttBtn, $("webcode")]) { el.hidden = true; el.disabled = true; el.setAttribute("aria-disabled", "true"); }
+  askMode();
   pollHealth();
   setInterval(() => pollHealth(), 5000);
 } else {
