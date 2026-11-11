@@ -64,6 +64,7 @@ ROOTS = [
     ("skills", HOME / ".agents" / "skills"),
 ]
 SKILL_TEXT_MAX = 47 * 1024     # under Flaxeon's 48 KB DOCUMENT_TEXT_MAX, so the text is never dropped
+FED_TEXT_MAX = 46 * 1024       # a fed file's own text on its star; the header fits in the rest
 
 # ── what is never read ────────────────────────────────────────────────────
 PRUNE_DIRS = {"node_modules", "venv", ".venv", "env", ".git", "dist", "build", "__pycache__",
@@ -471,6 +472,16 @@ def index(args, say) -> tuple[Projects, dict]:
                 except OSError:
                     pass
             stats[cls] += 1
+            if p["kind"] == "fed file" and cls in ("text", "doc") and not p.get("full"):
+                try:                               # a fed file's star carries the file itself
+                    if cls == "doc":
+                        raw = read_doc(path)
+                    else:
+                        raw = read_text(path) if st.st_size <= TEXT_MAX else ""
+                    p["full"] = scrub(raw)[:FED_TEXT_MAX]
+                    p["full_cut"] = len(raw) > FED_TEXT_MAX
+                except Exception:
+                    pass
             if db is None:
                 continue
             row = db.execute("SELECT size, mtime FROM files WHERE path=?", (spath,)).fetchone()
@@ -727,6 +738,11 @@ def summary_text(p: dict) -> str:
     top = [k for k, _ in p["top"].most_common(14) if k != "(files)"]
     if top:
         lines.append("Inside: " + ", ".join(top))
+    if p.get("full"):                              # a fed file: its own text, not a listing
+        lines += ["", p["full"]]
+        if p.get("full_cut"):
+            lines += ["", f"(Cut at {FED_TEXT_MAX // 1024} KB; the whole file is in SPARK SOL's local index.)"]
+        return scrub("\n".join(lines))
     if p["readme"]:
         lines += ["", p["readme"][:1600]]
     lines.append("")
