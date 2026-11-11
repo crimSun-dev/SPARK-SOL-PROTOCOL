@@ -1184,7 +1184,11 @@ async function cloudTurn(raw) {
     CS.key = ""; setPhase("nokey");
     return { answer: "Claude refused the key. Paste a new one into the ask line.", nodes: [], error: "brain 401" };
   }
-  if (!r.ok) return { answer: `No answer: the cloud brain answered HTTP ${r.status}.`, nodes: [], error: "brain " + r.status };
+  if (!r.ok) {                           // Anthropic's own reason, e.g. "Your credit balance is too low"
+    let why = "";
+    try { why = ((await r.json()).error || {}).message || ""; } catch {}
+    return { answer: `No answer: the cloud brain answered HTTP ${r.status}` + (why ? `: ${why}` : ".") , nodes: [], error: "brain " + r.status };
+  }
   const d = await r.json();
   const answer = (d.content || []).filter((c) => c.type === "text").map((c) => c.text).join("").trim();
   const tag = /\[REMEMBER\]\s*([\s\S]+)/i.exec(answer);
