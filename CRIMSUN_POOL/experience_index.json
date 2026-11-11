@@ -1,0 +1,151 @@
+[
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\EXPERIENCE POOL\\EXCEL_WORKFLOW_FOUNDATIONAL_EXPERIENCE.md",
+    "module_id": "EXCEL_WORKFLOW_HISTORY",
+    "domain": "BACKEND_ETL / DESKTOP_DATA_TOOL (Python \u00b7 pandas \u00b7 openpyxl)",
+    "source": "Excel Workflow Processor \u2014 TDD + OpenSpec change trail + shipped source",
+    "type": "module",
+    "approx_tokens": 2223,
+    "counts": {
+      "AXIOM": 0,
+      "RULE": 6,
+      "TRAP": 0,
+      "CHECK": 0,
+      "PROGRESS": 5,
+      "MISTAKE": 4,
+      "GROWN": 4,
+      "BRIDGE": 0
+    },
+    "ranges": {
+      "RULE": "RULE-001..RULE-006",
+      "PROGRESS": "PROGRESS-001..PROGRESS-005",
+      "MISTAKE": "MISTAKE-001..MISTAKE-004",
+      "GROWN": "GROWN-001..GROWN-004"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": null,
+    "ids_repeat": false,
+    "family": "experience",
+    "tags": {
+      "TIER-0": 20,
+      "TIMELESS": 6,
+      "IMPACT-HIGH": 1,
+      "IMPACT-MEDIUM": 2,
+      "NEVER_RESOLVED": 2,
+      "IMPACT-LOW": 1
+    }
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\EXPERIENCE POOL\\MERGE_CATS_DEFENDER_FOUNDATIONAL_EXPERIENCE.md",
+    "module_id": "MERGE_CATS_DEFENDER_HISTORY",
+    "domain": "GAME_ENGINE (Phaser 4 / classic-global JS, no build system)",
+    "source": "Merge Cats Defender (lane-defense game) \u2014 openspec spec-driven trail + codebase archaeology",
+    "type": "module",
+    "approx_tokens": 3679,
+    "counts": {
+      "AXIOM": 0,
+      "RULE": 6,
+      "TRAP": 0,
+      "CHECK": 0,
+      "PROGRESS": 7,
+      "MISTAKE": 7,
+      "GROWN": 4,
+      "BRIDGE": 3
+    },
+    "ranges": {
+      "RULE": "RULE-001..RULE-006",
+      "PROGRESS": "PROGRESS-001..PROGRESS-007",
+      "MISTAKE": "MISTAKE-001..MISTAKE-007",
+      "GROWN": "GROWN-001..GROWN-004",
+      "BRIDGE": "BRIDGE-001..BRIDGE-003"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": null,
+    "ids_repeat": false,
+    "family": "experience",
+    "tags": {
+      "TIER-0": 25,
+      "TIMELESS": 1,
+      "IMPACT-HIGH": 2,
+      "IMPACT-MEDIUM": 3,
+      "IMPACT-LOW": 2,
+      "NEVER_RESOLVED": 2
+    }
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\EXPERIENCE POOL\\SUNNYSIDE_WORLD_FOUNDATIONAL_EXPERIENCE.md",
+    "module_id": "SUNNYSIDE_WORLD_HISTORY",
+    "domain": "GAME_ENGINE (Phaser 4 / plain-JS / no-bundler)",
+    "source": "Sunnyside World \u2014 v1 slice (2026-07-11) + ~24 OpenSpec changes (2026-07-12 \u2192 07-21)",
+    "type": "module",
+    "approx_tokens": 3610,
+    "counts": {
+      "AXIOM": 0,
+      "RULE": 8,
+      "TRAP": 0,
+      "CHECK": 0,
+      "PROGRESS": 11,
+      "MISTAKE": 14,
+      "GROWN": 6,
+      "BRIDGE": 0
+    },
+    "ranges": {
+      "RULE": "RULE-001..RULE-008",
+      "PROGRESS": "PROGRESS-001..PROGRESS-011",
+      "MISTAKE": "MISTAKE-001..MISTAKE-014",
+      "GROWN": "GROWN-001..GROWN-006"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": null,
+    "ids_repeat": false,
+    "family": "experience",
+    "tags": {
+      "TIER-0": 40,
+      "TIMELESS": 3,
+      "IMPACT-MEDIUM": 4,
+      "IMPACT-HIGH": 3,
+      "IMPACT-LOW": 7,
+      "NEVER_RESOLVED": 3
+    }
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\EXPERIENCE POOL\\TINY_SWORDS_LAST_STAND_FOUNDATIONAL_EXPERIENCE.md",
+    "module_id": "TINY_SWORDS_LAST_STAND_HISTORY",
+    "domain": "GAME_ENGINE (Phaser 4 / browser canvas, JS IIFE, no build step)",
+    "source": "Tiny Swords: Last Stand \u2014 29 archived OpenSpec change trails + git history + 2 Senior Decision Manifests + live code",
+    "type": "module",
+    "approx_tokens": 3564,
+    "counts": {
+      "AXIOM": 0,
+      "RULE": 9,
+      "TRAP": 0,
+      "CHECK": 0,
+      "PROGRESS": 7,
+      "MISTAKE": 6,
+      "GROWN": 4,
+      "BRIDGE": 4
+    },
+    "ranges": {
+      "RULE": "RULE-001..RULE-009",
+      "PROGRESS": "PROGRESS-001..PROGRESS-007",
+      "MISTAKE": "MISTAKE-001..MISTAKE-006",
+      "GROWN": "GROWN-001..GROWN-004",
+      "BRIDGE": "BRIDGE-001..BRIDGE-004"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": null,
+    "ids_repeat": false,
+    "family": "experience",
+    "tags": {
+      "TIER-0": 27,
+      "TIMELESS": 9,
+      "IMPACT-HIGH": 2,
+      "IMPACT-MEDIUM": 3,
+      "IMPACT-LOW": 1
+    }
+  }
+]

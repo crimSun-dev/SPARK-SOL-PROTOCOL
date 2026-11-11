@@ -1,0 +1,1252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPARK SOL</title>
+<link rel="icon" type="image/png" href="vendor/brand/spark-sol-mark.png">
+<style>
+@font-face { font-family: "Literata"; font-weight: 400; font-style: normal; font-display: swap;
+  src: url("vendor/fonts/literata-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Literata"; font-weight: 400; font-style: normal; font-display: swap;
+  src: url("vendor/fonts/literata-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Literata"; font-weight: 400; font-style: italic; font-display: swap;
+  src: url("vendor/fonts/literata-latin-400-italic.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Literata"; font-weight: 400; font-style: italic; font-display: swap;
+  src: url("vendor/fonts/literata-latin-ext-400-italic.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 400; font-display: swap;
+  src: url("vendor/fonts/schibsted-grotesk-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 400; font-display: swap;
+  src: url("vendor/fonts/schibsted-grotesk-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 500; font-display: swap;
+  src: url("vendor/fonts/schibsted-grotesk-latin-500-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Schibsted Grotesk"; font-weight: 500; font-display: swap;
+  src: url("vendor/fonts/schibsted-grotesk-latin-ext-500-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; font-display: swap;
+  src: url("vendor/fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; font-display: swap;
+  src: url("vendor/fonts/atkinson-hyperlegible-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 700; font-display: swap;
+  src: url("vendor/fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  color-scheme: dark;
+  --void: #0c1224;
+  --lift: #161d33;
+  --bone: #efe6d4;
+  --bone-dim: #a39886;
+  --filament: #7dbea8;   /* local and live only. Unused until the voice server runs */
+  --warn: #e36a4a;
+  --core: #f4f0e6;
+  --hair: 1px solid var(--bone-dim);
+  --floor-h: 72px;
+  --plate-w: 380px;
+  --gutter: 24px;
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --f-read: "Literata", Georgia, serif;
+  --f-work: "Schibsted Grotesk", system-ui, sans-serif;
+  --f-gauge: "Atkinson Hyperlegible", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--void);
+  color: var(--bone);
+  font: 400 15px/1.45 var(--f-work);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) var(--floor-h);
+  grid-template-areas: "sky" "floor";
+  height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ── sky ─────────────────────────────────────────────────────────── */
+#sky { grid-area: sky; position: relative; min-height: 0; outline: none; }
+#graph { position: absolute; inset: 0; }
+#sky:focus-visible::after {
+  content: ""; position: absolute; inset: 10px; pointer-events: none;
+  border: 1px solid var(--bone-dim); opacity: .62;
+}
+#marks { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+#marks svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.region {
+  position: absolute; left: 0; top: 0;
+  font: italic 400 15px/1 var(--f-read);
+  letter-spacing: .03em;
+  color: var(--bone-dim);
+  opacity: .84;
+  white-space: nowrap;
+  transition: opacity .4s var(--ease-out);
+}
+body.focused .region { opacity: .8; }
+.region.lit { opacity: 1 !important; }
+.name {
+  position: absolute; left: 0; top: 0;
+  font: 400 13px/1 var(--f-work);
+  letter-spacing: .01em;
+  color: var(--bone);
+  white-space: nowrap;
+  padding: 0 2px;
+}
+.name.focus { font-weight: 500; font-size: 14px; }
+.name.hover { color: var(--bone); opacity: .92; }
+.leader { stroke: var(--bone-dim); stroke-width: 1; fill: none; vector-effect: non-scaling-stroke; }
+.tick { fill: none; stroke: var(--bone); stroke-width: 1; opacity: .7; }
+
+/* ── protocol plate, upper left ───────────────────────────────────── */
+.mast {
+  position: absolute; top: var(--gutter); left: var(--gutter);
+  pointer-events: none; z-index: 2;
+}
+.mast img { display: block; width: 236px; height: auto; }
+.mast .count {
+  margin: 10px 0 0 calc(236px * .292);
+  font: 400 13px/1 var(--f-gauge);
+  letter-spacing: .04em;
+  color: var(--bone-dim);
+  font-variant-numeric: tabular-nums;
+}
+.mast .count b { font-weight: 700; color: var(--bone); }
+
+/* ── node plate, right ────────────────────────────────────────────── */
+#plate {
+  position: absolute; z-index: 3;
+  top: var(--gutter); right: var(--gutter);
+  bottom: auto;
+  max-height: calc(100% - var(--floor-h) - 2 * var(--gutter));
+  width: var(--plate-w);
+  background: var(--lift);
+  border: var(--hair);
+  display: flex; flex-direction: column; overflow: hidden;
+  transform: translateX(0); opacity: 1;
+  transition: transform .42s var(--ease-out), opacity .3s var(--ease-out), visibility 0s;
+}
+#plate[aria-hidden="true"] {
+  transform: translateX(24px); opacity: 0; visibility: hidden; pointer-events: none;
+  transition: transform .28s ease-in, opacity .2s ease-in, visibility 0s .28s;
+}
+.plate-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px 13px 20px;
+  border-bottom: 1px solid rgba(163, 152, 134, .35);
+  font: 400 13px/1 var(--f-gauge); letter-spacing: .04em; color: var(--bone-dim);
+}
+.plate-head .dye { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.plate-head .where { color: var(--bone); }
+.plate-head .close {
+  margin-left: auto; background: none; border: 0; padding: 6px 4px; cursor: pointer;
+  font: inherit; letter-spacing: .04em; color: var(--bone-dim); text-transform: uppercase;
+}
+.plate-head .close:hover { color: var(--bone); }
+.plate-body { flex: 0 1 auto; min-height: 0; padding: 22px 20px 24px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--bone-dim) transparent; }
+.plate-body h2 {
+  margin: 0; font: 500 21px/1.22 var(--f-work); letter-spacing: -.005em; color: var(--bone);
+  text-wrap: balance; overflow-wrap: anywhere;
+}
+.plate-body .key {
+  margin: 8px 0 0; font: 400 13px/1.4 var(--f-gauge); letter-spacing: .02em; color: var(--bone-dim);
+  overflow-wrap: anywhere;
+}
+.plate-body .value {
+  margin: 26px 0 0; font: 400 26px/1.28 var(--f-read); color: var(--bone); overflow-wrap: anywhere;
+}
+.plate-body .excerpt {
+  margin: 22px 0 0; font: 400 16px/1.62 var(--f-read); color: var(--bone);
+  overflow-wrap: anywhere; hyphens: auto; white-space: pre-line;
+}
+.plate-body .source {
+  margin: 22px 0 0; padding-top: 14px; border-top: 1px solid rgba(163, 152, 134, .25);
+  font: 400 12.5px/1.45 var(--f-gauge); letter-spacing: .02em; color: var(--bone-dim);
+  overflow-wrap: anywhere;
+}
+.plate-body .source span { display: block; color: var(--bone-dim); margin-bottom: 2px; text-transform: uppercase; letter-spacing: .06em; font-size: 11.5px; }
+
+/* ── floor ────────────────────────────────────────────────────────── */
+.floor {
+  grid-area: floor; position: relative; z-index: 4;
+  border-top: var(--hair);
+  background: var(--void);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: 22px 30px;
+  column-gap: 24px;
+  align-content: center;
+  padding: 0 var(--gutter);
+}
+#status {
+  margin: 0; align-self: center;
+  font: 400 14px/1 var(--f-gauge); letter-spacing: .04em; color: var(--bone-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#status .src { color: var(--bone-dim); }
+#status .src.warn { color: var(--warn); }
+#status .gap { display: inline-block; width: 1px; height: 11px; margin: 0 12px; background: var(--bone-dim); opacity: .5; vertical-align: -1px; }
+.words { grid-row: 1 / span 2; grid-column: 2; display: flex; align-items: center; gap: 22px; }
+.word {
+  background: none; border: 0; padding: 6px 0; margin: 0; white-space: nowrap;
+  font: 400 14px/1 var(--f-gauge); letter-spacing: .04em; color: var(--bone-dim);
+}
+.word[aria-disabled="true"] { cursor: not-allowed; }
+.ask {
+  grid-column: 1; align-self: end; position: relative;
+}
+.ask input {
+  width: 100%; height: 28px; padding: 0 0 4px; margin: 0;
+  background: transparent; border: 0; border-bottom: 1px solid rgba(163, 152, 134, .45);
+  font: 400 16px/1 var(--f-work); color: var(--bone); border-radius: 0;
+}
+.ask input::placeholder { color: var(--bone-dim); opacity: 1; }
+.ask input:disabled { cursor: not-allowed; }
+/* An input the operator can use: underline at 62% bone-dim, about 3.2:1 on the void. */
+.ask input:enabled { border-bottom-color: rgba(163, 152, 134, .62); }
+.word:not([aria-disabled="true"]) { cursor: pointer; }
+.word:not([aria-disabled="true"]):hover { color: var(--bone); }
+.word.on { color: var(--filament); }
+.word.held { color: var(--bone); }
+#status [hidden], #badge [hidden] { display: none; }
+#status .live { color: var(--filament); }
+#status .heard { color: var(--bone); }
+#status .warn { color: var(--warn); }
+#readout {
+  position: absolute; z-index: 2; left: var(--gutter); bottom: 18px;
+  max-width: min(720px, calc(100% - var(--plate-w) - 3 * var(--gutter)));
+  pointer-events: none;
+}
+#answer { margin: 0; font: 400 18px/1.42 var(--f-read); color: var(--bone); text-wrap: pretty; }
+#answer.warn { color: var(--warn); }
+#badge { margin: 10px 0 0; font: 400 12.5px/1 var(--f-gauge); letter-spacing: .04em; color: var(--bone-dim); }
+#badge .live { color: var(--filament); }
+#badge .warn { color: var(--warn); }
+#badge .gap { display: inline-block; width: 1px; height: 10px; margin: 0 10px; background: var(--bone-dim); opacity: .5; vertical-align: -1px; }
+:focus-visible { outline: 1px solid var(--bone); outline-offset: 3px; }
+
+@media (max-width: 799px) {
+  :root { --gutter: 16px; }
+  body.focused { grid-template-rows: minmax(0, 54fr) minmax(0, 46fr) var(--floor-h); grid-template-areas: "sky" "plate" "floor"; }
+  #plate { position: relative; grid-area: plate; inset: auto; width: auto; max-height: none; border-width: 1px 0 0 0; }
+  .floor { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 22px 30px; }
+  #status { grid-column: 1 / -1; }
+  .words { grid-row: 2; grid-column: 2; align-self: end; }
+  .word { padding-bottom: 4px; }
+  #plate[aria-hidden="true"] { display: none; }
+  .mast img { width: 176px; }
+  .mast .count { margin-left: calc(176px * .292); }
+  .floor { grid-template-columns: minmax(130px, 1fr) auto; column-gap: 14px; }
+  .words { gap: 10px; }
+  .word { font-size: 13px; letter-spacing: .02em; }
+  #readout { max-width: calc(100% - 2 * var(--gutter)); bottom: 12px; }
+  #answer { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #plate, #plate[aria-hidden="true"], .region { transition: none; }
+}
+</style>
+</head>
+<body>
+<!--
+THESIS: The notes are already a sky. The page is the observatory floor under it: one instrument
+reading at the bottom, the stars taking the rest. Refused: a card dashboard, a chat column beside a toy graph, a helmet HUD.
+OWN-WORLD: Indigo void #0c1224, bone ink #efe6d4, dim chalk dyes per memory category, verdigris held back for
+"local and live". Chart lettering: italic Literata region names under each cluster, hairline leaders to star names,
+a flat void-lift plate with a 1px bone-dim edge. No glass, no glow stacks, no tiles.
+STORY: Draven sees the F.L.A.X.E.O.N memory as a sky, opens any star to read the real record, and trusts the
+floor about where it came from (Neon or the mirror) and that the voice is not running yet.
+FIRST VIEWPORT: The sky fills the screen and turns slowly. Lockup and note count small, upper left. The 72px floor:
+source and VOICE not running, the inert Ask the notes input, HANDS-FREE OFF. Plate opens right, 380px, on focus.
+FORM: Observatory chart under an open night; brief-pinned in SPARK_SOL_IMPECCABLE_DESIGN_SPEC.md. seed: none (brief-pinned).
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+-->
+<main id="sky" tabindex="0" aria-label="Memory sky. Arrow keys move between stars, Enter opens one, Escape closes it.">
+  <div id="graph"></div>
+  <div id="marks" aria-hidden="true"><svg id="leaders"></svg></div>
+  <header class="mast">
+    <img src="vendor/brand/spark-sol-lockup.png" width="1910" height="442"
+         alt="F.L.A.X.E.O.N SPARK SOL. A bone spiral with one verdigris arc, and an ember X in the family name.">
+    <p class="count"><b id="count">0</b> <span id="count-word">notes</span></p>
+  </header>
+  <p class="sr-only" id="announce" aria-live="polite"></p>
+  <div id="readout" aria-live="polite">
+    <p id="answer" hidden></p>
+    <p id="badge" hidden></p>
+  </div>
+</main>
+  <aside id="plate" aria-hidden="true" aria-labelledby="plate-title">
+    <div class="plate-head">
+      <span class="dye" id="plate-dye"></span>
+      <span class="where" id="plate-region"></span>
+      <span id="plate-kind"></span>
+      <button class="close" id="plate-close" type="button">Close</button>
+    </div>
+    <div class="plate-body">
+      <h2 id="plate-title"></h2>
+      <p class="key" id="plate-key"></p>
+      <p class="value" id="plate-value" hidden></p>
+      <p class="excerpt" id="plate-excerpt" hidden></p>
+      <p class="source" id="plate-source" hidden><span>Source</span><b id="plate-source-text" style="font-weight:400"></b></p>
+    </div>
+  </aside>
+
+<footer class="floor">
+  <p id="status" role="status"><span class="src" id="src">READING</span></p>
+  <div class="words">
+    <button class="word" id="handsfree" type="button" aria-disabled="true" aria-pressed="false" title="Needs the server's ears">HANDS-FREE OFF</button>
+    <button class="word ptt" id="ptt" type="button" aria-disabled="true" title="Needs the server's ears">HOLD TO TALK</button>
+  </div>
+  <label class="ask">
+    <span class="sr-only">Ask the notes</span>
+    <input id="ask" type="text" placeholder="Ask the notes" disabled autocomplete="off" title="Answers wait for the server">
+  </label>
+</footer>
+
+<script src="vendor/3d-force-graph.min.js"></script>
+<script src="graph-data.js"></script>
+<script>
+// The one function that may make sound. A muted tab returns before any audio exists.
+// Takes a WAV (URL or Blob) from the local voice, or {text} for the browser's own
+// synthesizer (a voice that runs on this machine only). Resolves when the sound ends.
+let NOW_PLAYING = null;
+function play(what) {
+  if (new URLSearchParams(location.search).get("mute") === "1") return Promise.resolve("muted");
+  if (what && typeof what === "object" && !(what instanceof Blob)) {
+    const u = new SpeechSynthesisUtterance(what.text);
+    const v = speechSynthesis.getVoices().filter((x) => x.localService && /^en/i.test(x.lang));
+    if (!v.length) return Promise.resolve("no-local-browser-voice");
+    u.voice = v[0];
+    return new Promise((res) => {
+      u.onend = u.onerror = () => { NOW_PLAYING = null; res("ended"); };
+      NOW_PLAYING = { stop: () => speechSynthesis.cancel(), pause: () => speechSynthesis.pause(), resume: () => speechSynthesis.resume() };
+      speechSynthesis.speak(u);
+    });
+  }
+  const src = typeof what === "string" ? what : URL.createObjectURL(what);
+  const audio = new Audio(src);
+  return new Promise((res) => {
+    const done = (why) => { NOW_PLAYING = null; if (typeof what !== "string") URL.revokeObjectURL(src); res(why); };
+    audio.onended = () => done("ended"); audio.onerror = () => done("error");
+    NOW_PLAYING = { stop: () => { audio.pause(); done("stopped"); }, pause: () => audio.pause(), resume: () => audio.play() };
+    audio.play().catch(() => done("blocked"));
+  });
+}
+</script>
+<script type="module">
+import * as THREE from "./vendor/three/three.module.js";
+
+const DYES = {
+  identity: "#c4b48a", preferences: "#b8a0c4", projects: "#8aa0b8", relationships: "#b8929a",
+  wishes: "#c4a48a", notes: "#8eaa96", documents: "#8d99a6", sessions: "#7f93a8",
+  // build.py project summaries: the four chalks the design spec left unused on this sky
+  workspace: "#9aa57a", pools: "#b08968", experience: "#6f8f78", skills: "#a6847c",
+};
+const REGION_NAME = {
+  identity: "Identity", preferences: "Preferences", projects: "Projects", relationships: "Relationships",
+  wishes: "Wishes", notes: "Notes", documents: "Documents", sessions: "Sessions",
+  captures: "Captures",
+  workspace: "Workspace", pools: "Pools", experience: "Experience", skills: "Skills",
+};
+// Served by server.py, the page is the whole instrument. Served anywhere else (GitHub Pages),
+// it is a read-only window on this machine's server: it reads /graph and /health from
+// 127.0.0.1 and never asks, listens, speaks or posts. Nothing of the memory is in that copy.
+const REMOTE = !/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
+const API = REMOTE ? "http://127.0.0.1:" + (/^\d{2,5}$/.test(new URLSearchParams(location.search).get("port") || "")
+  ? new URLSearchParams(location.search).get("port") : "4700") : "";   // ?port= for a second server; always this machine
+const CORE = new THREE.Color("#f4f0e6");
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)");
+const $ = (id) => document.getElementById(id);
+
+const data = (typeof GRAPH !== "undefined" && GRAPH) ? GRAPH : { source: "none", nodes: [], links: [], regions: [] };
+const nodes = data.nodes.map((n) => ({ ...n }));
+const links = data.links.map((l) => ({ ...l }));
+const regions = (data.regions || []).filter((r) => nodes.some((n) => n.group === r));
+
+// ── floor and mast: what was read, and from where ─────────────────────
+$("count").textContent = nodes.length.toLocaleString("en");
+$("count-word").textContent = nodes.length === 1 ? "note" : "notes";
+const fmtDay = (iso) => {
+  if (!iso) return "";
+  const d = new Date(iso.length <= 10 ? iso + "T00:00:00" : iso);
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }).toUpperCase();
+};
+const src = $("src");
+const status = $("status");
+function setFloor() {
+  status.textContent = "";
+  if (!nodes.length) {
+    const s = document.createElement("span"); s.className = "src warn"; s.textContent = "No notes indexed";
+    status.append(s);
+  } else {
+    const s = document.createElement("span");
+    if (data.source === "neon") {
+      s.className = "src"; s.textContent = "NEON";
+      s.title = "Read from Neon at " + new Date(data.read_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+    } else {
+      s.className = "src warn";
+      s.textContent = "MIRROR" + (data.mirror_day ? " · " + fmtDay(data.mirror_day) : "");
+      s.title = "Neon was not read" + (data.reason ? " (" + data.reason + ")" : "") + ". This is the local copy.";
+    }
+    status.append(s);
+  }
+  for (const id of ["activity", "ears", "voiceread"]) {
+    const g = document.createElement("span"); g.className = "gap"; g.setAttribute("aria-hidden", "true"); g.dataset.for = id;
+    const r = document.createElement("span"); r.id = id;
+    status.append(g, r);
+  }
+  reading("activity", "", ""); reading("ears", "", "");
+  reading("voiceread", REMOTE ? "" : "VOICE not running", "");
+}
+// one reading on the status line; an empty reading hides with its rule
+function reading(id, text, cls) {
+  const el = $(id); if (!el) return;
+  el.textContent = text; el.className = cls || "";
+  el.hidden = !text; status.querySelector(`.gap[data-for="${id}"]`).hidden = !text;
+}
+setFloor();
+
+// ── stars ─────────────────────────────────────────────────────────────
+function discTexture(kind) {
+  const c = document.createElement("canvas"); c.width = c.height = 128;
+  const x = c.getContext("2d"); const r = 64;
+  const g = x.createRadialGradient(r, r, 0, r, r, r);
+  if (kind === "halo") {        // the soft 8px falloff
+    g.addColorStop(0, "rgba(255,255,255,.95)");
+    g.addColorStop(.18, "rgba(255,255,255,.55)");
+    g.addColorStop(.45, "rgba(255,255,255,.16)");
+    g.addColorStop(.75, "rgba(255,255,255,.04)");
+    g.addColorStop(1, "rgba(255,255,255,0)");
+  } else {                      // the 2px core
+    g.addColorStop(0, "rgba(255,255,255,1)");
+    g.addColorStop(.62, "rgba(255,255,255,1)");
+    g.addColorStop(1, "rgba(255,255,255,0)");
+  }
+  x.fillStyle = g; x.fillRect(0, 0, 128, 128);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const HALO = discTexture("halo"), DOT = discTexture("core");
+
+function starPx(n) {           // diameter of the halo on screen, in CSS px
+  if (n.group === "documents") return 20 + Math.min(10, Math.log10(Math.max(10, n.size || 10)) * 2);
+  if (n.group === "sessions") return 22;
+  return 20;
+}
+let pxToScale = 0.002;
+function computeScale() {
+  const cam = graph.camera(); const h = graphEl.clientHeight || 1;
+  pxToScale = 2 / ((1 / Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2)) * h);
+}
+function makeStar(n) {
+  const dye = new THREE.Color(DYES[n.group] || "#efe6d4");
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: HALO, color: dye, transparent: true, opacity: .5, depthWrite: false,
+    blending: THREE.AdditiveBlending, sizeAttenuation: false,
+  }));
+  const dot = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: DOT, color: dye, transparent: true, opacity: .78, depthWrite: false, sizeAttenuation: false,
+  }));
+  const group = new THREE.Group(); group.add(halo); group.add(dot);
+  group.userData = { halo, dot, dye, px: starPx(n) };
+  n.__star = group;
+  paintStar(n);                 // a star drawn after its state was set (a birth, a hold) shows that state
+  return group;
+}
+function sizeStar(n, k) {
+  const { halo, dot, px } = n.__star.userData;
+  const hp = px * k * pxToScale; const dp = 4.6 * Math.max(1, k * .9) * pxToScale;
+  halo.scale.set(hp, hp, 1); dot.scale.set(dp, dp, 1);
+}
+const FILAMENT = new THREE.Color("#7dbea8");
+const cited = new Set();          // stars the last answer used
+const pulsing = new Set();        // filament: a birth, or the focused star while the local voice speaks
+
+// ── memory gestures: a recall and a birth, each a short paint on the star already there ──
+// Eight variants. Each returns multipliers and offsets for the existing halo, core dot and
+// leader line, drawn only in that record's dye or in filament. Every one ends inside a second.
+// A motif never calls play(): it is light, not sound.
+const bell = (t) => Math.sin(Math.PI * Math.min(1, Math.max(0, t)));
+const MOTIFS = [
+  { name: "swell",   ms: 820, at: (t) => ({ h: 1 + .55 * bell(t), ha: .3 * bell(t) }) },
+  { name: "twice",   ms: 900, at: (t) => { const b = bell((t * 2) % 1); return { h: 1 + .3 * b, ha: .28 * b }; } },
+  { name: "ember",   ms: 760, at: (t) => ({ d: 1 + .9 * bell(t), da: .3 * bell(t), ha: -.22 * bell(t) }) },
+  { name: "tint",    ms: 880, at: (t) => ({ tint: bell(t), ha: .18 * bell(t) }) },
+  { name: "draw-in", ms: 800, at: (t) => ({ h: 1 - .4 * bell(t), d: 1 + .6 * bell(t), da: .3 * bell(t) }) },
+  { name: "leader",  ms: 900, at: (t) => ({ lead: bell(t), h: 1 + .25 * bell(t) }) },
+  { name: "flicker", ms: 840, at: (t) => ({ da: -.6 * Math.max(0, Math.sin(t * Math.PI * 6)) }) },
+  { name: "ring",    ms: 950, at: (t) => ({ h: 1 + .8 * bell(t), ha: -.3 * bell(t), da: -.25 * bell(t) }) },
+];
+// the same category and key always choose the same slots; birth sits half the table away from recall
+function motifSlots(group, key) {
+  const recall = hashStr(group + ":" + key) % MOTIFS.length;
+  return { recall, birth: (recall + MOTIFS.length / 2) % MOTIFS.length };
+}
+const motifs = new Map();         // star -> { v, t0, t }: its own set, so clearing `pulsing` never ends one
+function gesture(n, family) {
+  if (!n) return;
+  if (REDUCED.matches) { pulsing.add(n); paintStar(n); return; }   // §5: a filament hold, not a motif
+  const v = motifSlots(n.group, n.key)[family];
+  // a birth is fitted to the 700 ms filament pulse, so it ends as the star opens
+  motifs.set(n, { v, family, ms: family === "birth" ? 700 : MOTIFS[v].ms, t0: null, t: 0 });
+  window.__spark.gestures.push({ key: n.group + ":" + n.key, family, slot: v, motif: MOTIFS[v].name, at: performance.now() });
+}
+// While a star is in `pulsing`, filament wins the colour: no dye tint, no dyed leader. The shape still plays.
+function motifOf(n) {
+  const m = motifs.get(n); if (!m || m.t0 === null) return null;
+  const s = MOTIFS[m.v].at(m.t);
+  if (pulsing.has(n)) { delete s.tint; delete s.lead; }
+  return s;
+}
+function tickMotifs(now) {
+  for (const [n, m] of motifs) {
+    if (!n.__star) continue;                        // the star object is drawn on the next render
+    if (m.t0 === null) m.t0 = now;
+    m.t = (now - m.t0) / m.ms;
+    if (m.t >= 1) motifs.delete(n);                 // back to focus, hover, cited or rest
+    paintStar(n);
+  }
+}
+function paintStar(n) {
+  if (!n.__star) return;
+  const { halo, dot, dye } = n.__star.userData;
+  const isF = focus === n, isH = hover === n, isC = cited.has(n), isP = pulsing.has(n);
+  const m = motifOf(n) || {};
+  halo.material.opacity = Math.min(1, Math.max(0, (isF ? .95 : isH || isC || isP ? .82 : .5) + (m.ha || 0)));
+  halo.material.color.copy(isP ? FILAMENT : dye);
+  dot.material.color.copy(isP ? FILAMENT : isF ? CORE : dye);
+  if (m.tint) { halo.material.color.lerp(FILAMENT, m.tint); dot.material.color.lerp(FILAMENT, m.tint); }
+  dot.material.opacity = Math.min(1, Math.max(0, (isF || isH || isC || isP ? 1 : .78) + (m.da || 0)));
+  sizeStar(n, isF ? 1.5 : isH ? 1.18 : isC || isP ? 1.25 : 1);
+  if (m.h) { halo.scale.x *= m.h; halo.scale.y *= m.h; }
+  if (m.d) { dot.scale.x *= m.d; dot.scale.y *= m.d; }
+}
+
+// ── a seeded sky: the same memory always draws the same chart ─────────
+function hashStr(str) { let h = 2166136261 >>> 0; for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619); return h >>> 0; }
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+// ── layout: each category is a loose constellation ────────────────────
+const centers = {};
+const maxGroup = Math.max(1, ...regions.map((r) => nodes.filter((n) => n.group === r).length));
+regions.forEach((r, i) => {
+  const n = regions.length; const R = n === 1 ? 0 : 60 + 22 * Math.sqrt(maxGroup) + 16 * n;
+  const a = (i / n) * Math.PI * 2 + .6;
+  centers[r] = { x: Math.cos(a) * R, y: Math.sin(a * 2) * R * .22 + (i % 2 ? 14 : -14), z: Math.sin(a) * R * .8 };
+});
+nodes.forEach((n) => {                // start each star near its region, so the sky never explodes in
+  const c = centers[n.group] || { x: 0, y: 0, z: 0 };
+  const rnd = mulberry32(hashStr(n.group + ":" + n.key + ":" + n.id));
+  n.x = c.x + (rnd() - .5) * 30; n.y = c.y + (rnd() - .5) * 30; n.z = c.z + (rnd() - .5) * 30;
+});
+function regionForce(alpha) {
+  for (const n of nodes) {
+    const c = centers[n.group]; if (!c) continue;
+    n.vx += (c.x - n.x) * .14 * alpha; n.vy += (c.y - n.y) * .14 * alpha; n.vz += (c.z - n.z) * .14 * alpha;
+  }
+}
+
+// ── graph ─────────────────────────────────────────────────────────────
+const nodeOf = (v) => (typeof v === "object" ? v : nodes[v]);
+function linkTone(l) {        // a constellation draws its own lines; a bridge shows only when touched
+  const a = nodeOf(l.source), b = nodeOf(l.target);
+  const touched = [focus, hover].some((f) => f && (a === f || b === f));
+  if (touched) return "rgba(239,230,212,.62)";
+  return a && b && a.group === b.group ? "rgba(239,230,212,.3)" : "rgba(239,230,212,0)";
+}
+function repaint() { nodes.forEach(paintStar); graph.linkColor(linkTone); }
+const graphEl = $("graph");
+let focus = null, hover = null, kbIndex = -1;
+let graph;
+try {
+  graph = ForceGraph3D({ controlType: "orbit", rendererConfig: { antialias: true, alpha: false, powerPreference: "high-performance" } })(graphEl)
+    .backgroundColor("#0c1224")
+    .showNavInfo(false)
+    .width(graphEl.clientWidth).height(graphEl.clientHeight)
+    .nodeLabel(() => "")
+    .nodeThreeObject(makeStar)
+    .enableNodeDrag(false)
+    .linkColor(linkTone)
+    .linkOpacity(1)
+    .linkWidth(0)
+    .warmupTicks(260)
+    .cooldownTicks(0)
+    .onNodeHover((n) => { hover = n || null; graphEl.style.cursor = n ? "pointer" : ""; repaint(); })
+    .onNodeClick((n) => openStar(n))
+    .onBackgroundClick(() => closeStar());
+  graph.d3Force("region", regionForce);
+  graph.d3Force("charge").strength(-34);
+  graph.d3Force("link").strength(.03).distance(46);
+  computeScale();
+  graph.graphData({ nodes, links });
+} catch (e) {
+  status.textContent = "";
+  const s = document.createElement("span"); s.className = "src warn"; s.textContent = "The sky needs WebGL, and this browser refused it";
+  status.append(s);
+  throw e;
+}
+
+// a far dust field: not records, never clickable, gives the void depth
+(function dust() {
+  const rnd = mulberry32(0x5A7C501);
+  const N = 1600, pos = new Float32Array(N * 3), col = new Float32Array(N * 3);
+  const bone = new THREE.Color("#efe6d4"); const v = new THREE.Color("#0c1224");
+  for (let i = 0; i < N; i++) {
+    const u = rnd() * 2 - 1, t = rnd() * Math.PI * 2, r = 1500 + rnd() * 1600;
+    const s = Math.sqrt(1 - u * u);
+    pos.set([Math.cos(t) * s * r, u * r, Math.sin(t) * s * r], i * 3);
+    const k = .14 + Math.pow(rnd(), 3) * .55;
+    const c = v.clone().lerp(bone, k); col.set([c.r, c.g, c.b], i * 3);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  g.setAttribute("color", new THREE.BufferAttribute(col, 3));
+  const m = new THREE.PointsMaterial({ size: 1.3, sizeAttenuation: false, vertexColors: true, depthWrite: false });
+  const p = new THREE.Points(g, m); p.renderOrder = -1; graph.scene().add(p);
+})();
+
+const controls = graph.controls();
+controls.enableDamping = true; controls.dampingFactor = .08;
+controls.rotateSpeed = .5; controls.zoomSpeed = .6; controls.enablePan = false;
+controls.minDistance = 30; controls.maxDistance = 1400;
+function setIdle(on) { controls.autoRotate = on && !REDUCED.matches; controls.autoRotateSpeed = .22; }
+let resumeTimer = 0;
+controls.addEventListener("start", () => { setIdle(false); clearTimeout(resumeTimer); });
+controls.addEventListener("end", () => { clearTimeout(resumeTimer); if (!focus) resumeTimer = setTimeout(() => setIdle(true), 6000); });
+REDUCED.addEventListener?.("change", () => setIdle(!focus));
+
+function overview(ms) { if (nodes.length) graph.zoomToFit(REDUCED.matches ? 0 : ms, nodes.length < 6 ? 160 : 112); }
+// frame the sky once the layout has settled, never before
+let framed = false;
+function frameFirst() { if (framed) return; framed = true; overview(0); setIdle(true); }
+graph.onEngineStop(() => requestAnimationFrame(() => requestAnimationFrame(frameFirst)));
+setTimeout(frameFirst, 900);
+
+// ── focus and the plate ───────────────────────────────────────────────
+const plate = $("plate");
+function openStar(n) {
+  if (!n) return;
+  const prev = focus; focus = n; kbIndex = order.indexOf(n);
+  document.body.classList.add("focused");
+  repaint();
+  fillPlate(n);
+  plate.setAttribute("aria-hidden", "false");
+  setIdle(false); clearTimeout(resumeTimer);
+  requestAnimationFrame(fit);
+  const d = 74, h = Math.hypot(n.x, n.y, n.z) || 1, k = 1 + d / h;
+  const to = h < 1 ? { x: 0, y: 0, z: d } : { x: n.x * k, y: n.y * k + 8, z: n.z * k };
+  graph.cameraPosition(to, { x: n.x, y: n.y, z: n.z }, REDUCED.matches ? 0 : (prev ? 900 : 1300));
+  $("announce").textContent = n.label + ", " + (REGION_NAME[n.group] || n.group);
+}
+function closeStar() {
+  if (!focus) return;
+  focus = null; document.body.classList.remove("focused");
+  plate.setAttribute("aria-hidden", "true");
+  repaint();
+  requestAnimationFrame(fit);
+  overview(1100);
+  resumeTimer = setTimeout(() => setIdle(true), REDUCED.matches ? 0 : 1200);
+}
+function fillPlate(n) {
+  $("plate-dye").style.background = DYES[n.group] || "var(--bone)";
+  $("plate-region").textContent = REGION_NAME[n.group] || n.group;
+  $("plate-kind").textContent = n.kind && n.kind !== "fact" && n.kind !== "session" ? "· " + n.kind : "";
+  $("plate-title").textContent = n.label;
+  const bits = [];
+  if (n.group === "sessions") { if (n.language) bits.push(n.language); }
+  else bits.push(n.group === "documents" ? n.key : n.group + " / " + n.key);
+  if (n.updated) bits.push("updated " + new Date(n.updated + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }));
+  $("plate-key").textContent = bits.join(" · ");
+  const isShort = n.kind === "fact" && (n.excerpt || "").length <= 90;
+  $("plate-value").hidden = !isShort; $("plate-excerpt").hidden = isShort;
+  $(isShort ? "plate-value" : "plate-excerpt").textContent = n.excerpt || "This record is empty.";
+  const hasSrc = !!n.source;
+  $("plate-source").hidden = !hasSrc; $("plate-source-text").textContent = n.source || "";
+  plate.querySelector(".plate-body").scrollTop = 0;
+}
+$("plate-close").addEventListener("click", closeStar);
+
+// ── keyboard: the sky is reachable without a mouse ────────────────────
+const order = [...nodes].sort((a, b) => regions.indexOf(a.group) - regions.indexOf(b.group) || a.id - b.id);
+$("sky").addEventListener("keydown", (e) => {
+  if (e.target !== $("sky")) { if (e.key === "Escape") { closeStar(); $("sky").focus(); } return; }
+  if (!order.length) return;
+  if (e.key === "ArrowRight" || e.key === "ArrowDown") { kbIndex = (kbIndex + 1) % order.length; }
+  else if (e.key === "ArrowLeft" || e.key === "ArrowUp") { kbIndex = (kbIndex - 1 + order.length) % order.length; }
+  else if (e.key === "Enter" && kbIndex >= 0) { openStar(order[kbIndex]); e.preventDefault(); return; }
+  else if (e.key === "Escape") { closeStar(); hover = null; repaint(); return; }
+  else return;
+  e.preventDefault();
+  hover = order[kbIndex]; repaint();
+  $("announce").textContent = hover.label + ", " + (REGION_NAME[hover.group] || hover.group);
+  if (focus) openStar(hover);
+});
+
+// ── chart lettering: region names and star names, pinned each frame ───
+const marks = $("marks"), svg = $("leaders");
+const regionEls = {};
+for (const r of regions) {
+  const el = document.createElement("div"); el.className = "region"; el.textContent = REGION_NAME[r] || r;
+  marks.append(el); regionEls[r] = el;
+}
+const nameEls = { focus: mk("name focus"), hover: mk("name hover") };
+const citeEls = Array.from({ length: 6 }, () => mk("name"));
+function mk(c) { const el = document.createElement("div"); el.className = c; el.hidden = true; marks.append(el); return el; }
+const lines = { focus: line(), hover: line() };
+const citeLines = citeEls.map(() => line());
+function line() {
+  const p = document.createElementNS("http://www.w3.org/2000/svg", "polyline"); p.setAttribute("class", "leader"); svg.append(p);
+  return p;
+}
+const ticks = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+ticks.setAttribute("class", "tick"); ticks.setAttribute("r", "13"); ticks.style.display = "none"; svg.append(ticks);
+
+function behind(n) {           // a star behind the camera has no place on the chart
+  const cam = graph.camera(); const v = new THREE.Vector3(n.x, n.y, n.z).project(cam);
+  return v.z > 1;
+}
+function pinName(n, el, ln, sky) {
+  if (!n || behind(n)) { el.hidden = true; ln.setAttribute("points", ""); return; }
+  const p = graph.graph2ScreenCoords(n.x, n.y, n.z);
+  el.textContent = n.label; el.hidden = false;
+  const w = el.offsetWidth;
+  const room = sky.right - p.x;
+  const left = room < w + 56;                    // flip the leader toward open sky
+  const s = left ? -1 : 1;
+  const r = n === focus ? 13 : 9;
+  const x0 = p.x + s * r * .7, y0 = p.y - r * .7, x1 = p.x + s * 22, y1 = p.y - 22, x2 = x1 + s * 10;
+  ln.setAttribute("points", `${x0},${y0} ${x1},${y1} ${x2},${y1}`);
+  const lead = (motifOf(n) || {}).lead || 0;      // the existing hairline, in this record's dye
+  ln.style.stroke = lead ? DYES[n.group] || "" : ""; ln.style.strokeOpacity = lead ? String(.45 + .55 * lead) : "";
+  ln.style.strokeWidth = lead ? String(1 + .8 * lead) : "";
+  el.style.transform = `translate(${left ? x2 - w - 4 : x2 + 4}px, ${y1 - 7}px)`;
+}
+const hits = (a, list, pad) => list.some((b) => a.l < b.r + pad && a.r > b.l - pad && a.t < b.b + pad && a.b > b.t - pad);
+function placeRegions(W, H) {  // chart lettering: under its own cluster, never on a star, a name, or another region
+  const obstacles = [], pts = {};
+  for (const n of nodes) {
+    if (behind(n)) continue;
+    const p = graph.graph2ScreenCoords(n.x, n.y, n.z);
+    if (p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) continue;
+    const r = n === focus ? 19 : 7;
+    obstacles.push({ l: p.x - r, r: p.x + r, t: p.y - r, b: p.y + r });
+    (pts[n.group] ||= []).push(p);
+  }
+  for (const el of [nameEls.focus, nameEls.hover, ...citeEls]) {
+    if (el.hidden) continue;
+    const b = el.getBoundingClientRect(); obstacles.push({ l: b.left, r: b.right, t: b.top, b: b.bottom });
+  }
+  const placed = [];
+  for (const r of regions) {
+    const el = regionEls[r], P = pts[r];
+    if (!P || !P.length) { el.style.visibility = "hidden"; continue; }
+    const xs = P.map((p) => p.x).sort((a, b) => a - b), ys = P.map((p) => p.y).sort((a, b) => a - b);
+    const mx = xs[xs.length >> 1], my = ys[ys.length >> 1];
+    const ds = P.map((p) => Math.hypot(p.x - mx, p.y - my));
+    const md = [...ds].sort((a, b) => a - b)[ds.length >> 1] || 0;
+    const core = P.filter((p, i) => ds[i] <= Math.max(2 * md, 24));
+    const lowest = Math.max(...core.map((p) => p.y));
+    const w = el.offsetWidth || 80, h = 16;
+    const at = (dx, dy) => {
+      const x = Math.min(Math.max(mx + dx, w / 2 + 12), W - w / 2 - 12);
+      const y = Math.min(lowest + 18 + dy, H - 26);
+      return { l: x - w / 2, r: x + w / 2, t: y, b: y + h };
+    };
+    let best = null;
+    search: for (let dy = 0; dy <= 120; dy += 10) {
+      for (const dx of [0, -20, 20, -40, 40]) {
+        const box = at(dx, dy);
+        if (!hits(box, obstacles, 3) && !hits(box, placed, 6)) { best = box; break search; }
+      }
+    }
+    best ||= at(0, 0);
+    placed.push(best);
+    el.style.visibility = "";
+    el.style.transform = `translate(${best.l}px, ${best.t}px)`;
+    el.classList.toggle("lit", !!focus && focus.group === r);
+  }
+}
+function frame(now) {
+  tickMotifs(now || performance.now());
+  const W = graphEl.clientWidth, H = graphEl.clientHeight;
+  const plateOpen = focus && innerWidth >= 800;
+  const sky = { right: plateOpen ? W - 380 - 48 : W - 16 };
+  pinName(focus, nameEls.focus, lines.focus, sky);
+  pinName(hover && hover !== focus ? hover : null, nameEls.hover, lines.hover, sky);
+  const others = [...cited].filter((n) => n !== focus && n !== hover);
+  citeEls.forEach((el, i) => pinName(others[i] || null, el, citeLines[i], sky));
+  if (focus && !behind(focus)) {
+    const p = graph.graph2ScreenCoords(focus.x, focus.y, focus.z);
+    ticks.style.display = ""; ticks.setAttribute("cx", p.x); ticks.setAttribute("cy", p.y);
+  } else ticks.style.display = "none";
+  placeRegions(W, H);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// ── size: the canvas follows its box; CSS never scales it ─────────────
+function fit() {
+  graph.width(graphEl.clientWidth).height(graphEl.clientHeight);
+  computeScale(); nodes.forEach(paintStar);
+}
+new ResizeObserver(fit).observe(graphEl);
+
+// ════════════════════════════════════════════════════════════════════
+// The live floor: ask, answer, speak, hear, remember. Everything below talks
+// to server.py on this machine and nothing else.
+// ════════════════════════════════════════════════════════════════════
+const SILENCE_MS = 700, FINISH_MS = 900, MIN_UTTERANCE_MS = 300;   // tune after a day of real use, separately
+const CHUNK = 170;
+const ask = $("ask"), hfBtn = $("handsfree"), pttBtn = $("ptt");
+const answerEl = $("answer"), badgeEl = $("badge");
+let HEALTH = null, speaking = false, paused = false, turnBusy = false;
+let lastBadge = null;              // what the badge last said; the same pair is not shown again
+window.__spark = { speakLog: [], turns: [], gestures: [], motifSlots, motifs, MOTIFS, pulsing, cited };   // receipts for the verify steps
+
+// ── browser hosts for the drill: every resource this page ever loaded ─
+const HOSTS = new Set([location.hostname]);
+try {
+  new PerformanceObserver((list) => {
+    for (const e of list.getEntries()) { try { HOSTS.add(new URL(e.name).hostname); } catch {} }
+  }).observe({ type: "resource", buffered: true });
+} catch {}
+function postHosts() {
+  if (REMOTE) return;
+  fetch("/drill/browser", { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ hosts: [...HOSTS].filter(Boolean) }) }).catch(() => {});
+}
+
+function api(path, body, raw) {
+  return fetch(path, { method: "POST", headers: { "Content-Type": raw ? "audio/wav" : "application/json" },
+    body: raw ? body : JSON.stringify(body) });
+}
+
+// ── health: voice, ears, brain ────────────────────────────────────────
+function voiceReady() { return !!HEALTH && HEALTH.voice === "local" && HEALTH.voice_bay && HEALTH.voice_bay.status === "ready"; }
+function voiceReading() {
+  if (!HEALTH) return reading("voiceread", "VOICE not running", "");
+  if (voiceReady()) return reading("voiceread", "VOICE local · " + (HEALTH.voice_bay.profile || "Spark"), "live");
+  reading("voiceread", "VOICE browser", "warn");
+}
+function earsReading() {
+  const h = HEALTH && HEALTH.hearing;
+  const ready = !!h && h.status === "ready";
+  for (const b of [hfBtn, pttBtn]) {
+    b.setAttribute("aria-disabled", ready ? "false" : "true");
+    b.title = ready ? "" : h && h.status === "loading" ? "The ears are loading" : "The ears are down";
+  }
+  if (!ready && handsFree) setHandsFree(false);
+  if (!h) return reading("ears", "", "");
+  if (h.status === "loading") return reading("ears", "EARS LOADING", "");
+  reading("ears", ready ? "" : "EARS DOWN", ready ? "" : "warn");
+}
+async function pollHealth(claim) {
+  try {
+    const r = await fetch(API + "/health" + (claim && !REMOTE ? "?claim_boot=1" : ""),
+      { cache: "no-store", ...(REMOTE && AbortSignal.timeout ? { signal: AbortSignal.timeout(4000) } : {}) });
+    HEALTH = await r.json();
+  } catch { HEALTH = null; }
+  const up = !!HEALTH;
+  if (REMOTE) {                    // read-only: follow every memory change, draw nothing else
+    if (up && HEALTH.mem_rev !== memRev) { memRev = HEALTH.mem_rev; swapSky(); }
+    if (!up) memRev = undefined;   // the server came back: read the whole sky again
+    reading("activity", up ? "LIVE · READ ONLY" : "SPARK SOL is not running on this machine", up ? "live" : "warn");
+    return HEALTH;
+  }
+  if (up) noteRev(HEALTH.sky_rev);
+  ask.disabled = !up; ask.title = up ? "" : "Answers wait for the server";
+  if (!speaking && !turnBusy && !listeningNow) reading("activity", up ? "STANDING BY" : "", "");
+  voiceReading(); earsReading();
+  if (up && !lastBadge) lastBadge = badgeKey(HEALTH, voiceReady() ? "local:" + (HEALTH.voice_bay.profile || "Spark") : "browser");
+  return HEALTH;
+}
+
+// ── the badge: shown only on a real change of brain or voice ─────────
+function badgeKey(b, voiceHdr) { return { brain: b.brain, model: b.model, where: b.where, voice: voiceHdr }; }
+function showBadge(k) {
+  const same = lastBadge && lastBadge.brain === k.brain && lastBadge.model === k.model && lastBadge.voice === k.voice;
+  lastBadge = k;
+  if (same) return;
+  badgeEl.textContent = "";
+  const b = document.createElement("span");
+  b.textContent = "BRAIN " + k.brain + " · " + k.model;
+  b.className = k.brain === "claude" || k.where === "the cloud" ? "warn" : "live";
+  const g = document.createElement("span"); g.className = "gap";
+  const v = document.createElement("span");
+  const local = !!k.voice && k.voice.startsWith("local:");
+  v.textContent = local ? "VOICE local · " + k.voice.slice(6) : "VOICE browser";
+  v.className = local ? "live" : "warn";
+  badgeEl.append(b, g, v); badgeEl.hidden = false;
+  clearTimeout(showBadge.t); showBadge.t = setTimeout(() => { badgeEl.hidden = true; }, 5000);
+}
+
+// ── speaking: sentence-packed chunks, fetch the next while this one plays
+function splitChunks(text, limit = CHUNK) {
+  const sents = (text || "").trim().split(/(?<=[.!?…])\s+/).filter(Boolean);
+  const out = []; let cur = "";
+  for (const s of sents) {
+    if (cur && cur.length + 1 + s.length > limit) { out.push(cur); cur = s; }
+    else cur = (cur + " " + s).trim();
+  }
+  if (cur) out.push(cur);
+  return out;
+}
+async function fetchChunk(text, i, log) {
+  const entry = { i, text, fetchStart: performance.now() };
+  log.push(entry);
+  let r = null;
+  try { r = await api("/tts", { text }); } catch {}
+  entry.fetchEnd = performance.now();
+  entry.voice = (r && r.headers.get("X-Spark-Voice")) || "browser";
+  if (r && r.ok) return { blob: await r.blob(), voice: entry.voice, entry };
+  return { text, voice: "browser", entry };
+}
+let speakToken = 0;
+async function speak(text, b) {
+  const chunks = splitChunks(text);
+  if (!chunks.length) return;
+  const token = ++speakToken;
+  const log = [], t0 = performance.now();
+  speaking = true; reading("activity", "SPEAKING", "");
+  let next = fetchChunk(chunks[0], 0, log);
+  let shown = false;
+  for (let i = 0; i < chunks.length; i++) {
+    const cur = await next;
+    if (token !== speakToken) break;
+    if (!shown && b) { showBadge(badgeKey(b, cur.voice)); shown = true; }
+    const local = cur.voice.startsWith("local:");
+    reading("activity", "SPEAKING", local ? "live" : "");
+    if (local && focus) { pulsing.add(focus); repaint(); }
+    if (i + 1 < chunks.length) next = fetchChunk(chunks[i + 1], i + 1, log);   // during playback
+    cur.entry.playStart = performance.now();
+    cur.entry.played = await play(cur.blob || { text: cur.text });
+    cur.entry.playEnd = performance.now();
+  }
+  pulsing.clear(); repaint();
+  window.__spark.speakLog.push({ text, chunks: log, firstAudioMs: log[0] && log[0].playStart ? log[0].playStart - t0 : null });
+  if (token === speakToken) { speaking = false; paused = false; reading("activity", "STANDING BY", ""); }
+}
+function stopSpeaking() {
+  speakToken++; if (NOW_PLAYING) NOW_PLAYING.stop();
+  speaking = false; paused = false; pulsing.clear(); repaint();
+  if (!turnBusy) reading("activity", "STANDING BY", "");
+}
+
+// ── an answer on the floor, and what the sky does about it ───────────
+function setAnswer(text, warn) {
+  answerEl.textContent = text || ""; answerEl.hidden = !text;
+  answerEl.classList.toggle("warn", !!warn);
+}
+function clearCited() { cited.clear(); repaint(); }
+function showCited(ids) {
+  // decided before any camera call: no notes is small talk, and the camera stays put
+  const list = (ids || []).map((i) => nodes[i]).filter(Boolean);
+  clearCited();
+  if (!list.length) return;
+  list.forEach((n) => cited.add(n));
+  if (list.length <= 3) openStar(list[0]);
+  else { closeStar(); repaint(); }
+  list.forEach((n) => gesture(n, "recall"));        // only now: the citation list is real and on the sky
+}
+
+async function turn(text, heardSecs) {
+  text = (text || "").trim();
+  if (!text || turnBusy) return;
+  stopSpeaking(); turnBusy = true;
+  reading("activity", "THINKING", "");
+  const t0 = performance.now();
+  let d;
+  try { d = await (await api("/chat", { text })).json(); }
+  catch { d = { answer: "The server did not answer.", nodes: [], error: "no server" }; }
+  window.__spark.turns.push({ text, heardSecs, thinkMs: performance.now() - t0, answer: d.answer, nodes: d.nodes });
+  turnBusy = false;
+  const swap = noteRev(d.sky_rev); if (swap) await swap;   // ids are positions in the current sky
+  if (d.birth) addNote(d.birth.node, d.birth.related);
+  else showCited(d.nodes);
+  setAnswer(d.answer, !!d.error);
+  await speak(d.answer, d.brain ? d : null);
+  if (d.next) {
+    turnBusy = true; reading("activity", "THINKING", "");
+    let e;
+    try { e = await (await api("/chat", { next: d.next })).json(); }
+    catch { e = { answer: "The server did not answer.", error: "no server" }; }
+    turnBusy = false;
+    setAnswer(e.answer, !!e.error); await speak(e.answer, e.brain ? e : null);
+  }
+  postHosts();
+  pollHealth();
+}
+ask.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" || e.isComposing) return;
+  const t = ask.value; ask.value = ""; turn(t);
+});
+
+// ── a capture is born on the sky ──────────────────────────────────────
+function addNote(node, relatedIndex) {
+  if (!node || nodes.some((n) => n.id === node.id)) return;
+  const rel = nodes[relatedIndex];
+  const n = { ...node };
+  const at = rel || { x: 0, y: 0, z: 0 };
+  const rnd = mulberry32(hashStr("birth:" + n.key));
+  n.x = at.x + (rnd() - .5) * 14; n.y = at.y + (rnd() - .5) * 14; n.z = at.z + (rnd() - .5) * 14;
+  nodes.push(n); order.push(n);
+  if (!regions.includes(n.group)) {
+    regions.push(n.group);
+    const el = document.createElement("div"); el.className = "region"; el.textContent = REGION_NAME[n.group] || n.group;
+    marks.append(el); regionEls[n.group] = el;
+  }
+  if (!centers[n.group]) centers[n.group] = { x: n.x, y: n.y, z: n.z };
+  graph.warmupTicks(0).graphData({ nodes, links });     // the sky does not re-settle for one star
+  $("count").textContent = nodes.length.toLocaleString("en");
+  $("count-word").textContent = nodes.length === 1 ? "note" : "notes";
+  clearCited();
+  gesture(n, "birth");                                  // the node is in `nodes`: its birth slot, once
+  pulsing.add(n); repaint();                            // filament, about 700 ms, then the fly
+  const hold = REDUCED.matches;                         // reduced motion: the filament stays until speech clears it
+  setTimeout(() => { if (!hold) pulsing.delete(n); repaint(); openStar(n); }, 700);
+}
+window.addNote = addNote;
+
+// ── reload: new stars swap in on the same graph and the same camera ───
+let skyRev = null, swapping = null, memRev;
+function layoutRegions() {
+  for (const k of Object.keys(centers)) delete centers[k];
+  const maxG = Math.max(1, ...regions.map((r) => nodes.filter((n) => n.group === r).length));
+  regions.forEach((r, i) => {
+    const n = regions.length; const R = n === 1 ? 0 : 60 + 22 * Math.sqrt(maxG) + 16 * n;
+    const a = (i / n) * Math.PI * 2 + .6;
+    centers[r] = { x: Math.cos(a) * R, y: Math.sin(a * 2) * R * .22 + (i % 2 ? 14 : -14), z: Math.sin(a) * R * .8 };
+  });
+}
+async function swapSky() {
+  if (swapping) return swapping;
+  swapping = (async () => {
+    let g;
+    try { g = await (await fetch(API + "/graph", { cache: "no-store" })).json(); } catch { return; }
+    if (!g || !Array.isArray(g.nodes)) return;
+    const was = new Map(nodes.map((n) => [n.group + ":" + n.key, n]));   // known stars keep their place
+    const firstSky = was.size === 0;          // the web viewer's opening read: frame it, no birth
+    closeStar(); hover = null; cited.clear(); pulsing.clear();
+    nodes.length = 0; links.length = 0; order.length = 0;
+    for (const raw of g.nodes) {
+      const n = { ...raw }; const old = was.get(n.group + ":" + n.key);
+      if (old) { n.x = old.x; n.y = old.y; n.z = old.z; }
+      nodes.push(n);
+    }
+    for (const l of g.links || []) links.push({ ...l });
+    regions.length = 0;
+    for (const r of g.regions || []) if (nodes.some((n) => n.group === r)) regions.push(r);
+    layoutRegions();
+    for (const n of nodes) if (n.x === undefined) {
+      const c = centers[n.group] || { x: 0, y: 0, z: 0 }; const rnd = mulberry32(hashStr(n.group + ":" + n.key + ":" + n.id));
+      n.x = c.x + (rnd() - .5) * 30; n.y = c.y + (rnd() - .5) * 30; n.z = c.z + (rnd() - .5) * 30;
+    }
+    // a motif already running belongs to its record, not to the discarded object: carry it over
+    const kept = new Map(nodes.map((n) => [n.group + ":" + n.key, n]));
+    for (const [o, m] of [...motifs]) { motifs.delete(o); const k = kept.get(o.group + ":" + o.key); if (k) motifs.set(k, m); }
+    // exactly one key added and none removed is a birth; any other difference plays nothing
+    const added = nodes.filter((n) => !was.has(n.group + ":" + n.key));
+    const removed = [...was.keys()].filter((k) => !kept.has(k));
+    if (!firstSky && added.length === 1 && removed.length === 0) gesture(added[0], "birth");
+    order.push(...[...nodes].sort((a, b) => regions.indexOf(a.group) - regions.indexOf(b.group) || a.id - b.id));
+    for (const r of Object.keys(regionEls)) if (!regions.includes(r)) { regionEls[r].remove(); delete regionEls[r]; }
+    for (const r of regions) if (!regionEls[r]) {
+      const el = document.createElement("div"); el.className = "region"; el.textContent = REGION_NAME[r] || r;
+      marks.append(el); regionEls[r] = el;
+    }
+    Object.assign(data, { source: g.source, reason: g.reason, read_at: g.read_at, mirror_day: g.mirror_day });
+    graph.warmupTicks(60).graphData({ nodes, links });     // same graph, same camera: no navigation
+    $("count").textContent = nodes.length.toLocaleString("en");
+    $("count-word").textContent = nodes.length === 1 ? "note" : "notes";
+    setFloor(); voiceReading(); earsReading();
+    if (REMOTE) { reading("voiceread", "", ""); reading("activity", "LIVE · READ ONLY", "live"); }
+    if (firstSky && nodes.length) { framed = false; setTimeout(frameFirst, 900); }
+    skyRev = g.sky_rev;
+  })();
+  try { await swapping; } finally { swapping = null; }
+}
+function noteRev(rev) {
+  if (rev === undefined || rev === null) return null;
+  if (skyRev === null) { skyRev = rev; return null; }
+  return rev !== skyRev ? swapSky() : null;
+}
+
+// ── ears: this page's microphone, 16 kHz mono 16-bit WAV, no cloud ────
+let mic = null, handsFree = false, pttHeld = false, listeningNow = false;
+let pending = null, finishTimer = 0, holdCommand = false, holdTimer = 0, echoHits = 0;
+const FRAME = 1024, RATE = 16000, FRAME_MS = FRAME / RATE * 1000;
+const ALIAS = /^\W*(?:hey[\s,]+)?spark\b[\s,.!?:;-]*/i;   // Spark only: "Hey Flaxeon" belongs to Flame
+
+function wav(samples) {
+  const n = samples.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, "RIFF"); v.setUint32(4, 36 + n * 2, true); w(8, "WAVE"); w(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, RATE, true); v.setUint32(28, RATE * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, "data"); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) { const x = Math.max(-1, Math.min(1, samples[i])); v.setInt16(44 + i * 2, x < 0 ? x * 0x8000 : x * 0x7fff, true); }
+  return new Blob([buf], { type: "audio/wav" });
+}
+function join(frames) {
+  const out = new Float32Array(frames.reduce((a, f) => a + f.length, 0));
+  let o = 0; for (const f of frames) { out.set(f, o); o += f.length; }
+  return out;
+}
+
+async function micOn() {
+  if (mic) return true;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+    const ctx = new AudioContext({ sampleRate: RATE });
+    const src = ctx.createMediaStreamSource(stream);
+    const proc = ctx.createScriptProcessor(FRAME, 1, 1);
+    const sink = ctx.createGain(); sink.gain.value = 0;      // keeps the processor running, makes no sound
+    src.connect(proc); proc.connect(sink); sink.connect(ctx.destination);
+    mic = { stream, ctx, src, proc, floor: .006, preroll: [], speech: null, quietMs: 0, voicedMs: 0, ptt: [] };
+    proc.onaudioprocess = (e) => onFrame(new Float32Array(e.inputBuffer.getChannelData(0)));
+    return true;
+  } catch (err) {
+    setAnswer("The microphone was refused: " + ((err && err.name) || "unknown error") + ".", true);
+    return false;
+  }
+}
+function micOff() {
+  if (!mic) return;
+  mic.proc.disconnect(); mic.src.disconnect(); mic.stream.getTracks().forEach((t) => t.stop()); mic.ctx.close();
+  mic = null; listeningNow = false;
+}
+
+function onFrame(f) {
+  if (!mic) return;
+  let sum = 0; for (let i = 0; i < f.length; i++) sum += f[i] * f[i];
+  const rms = Math.sqrt(sum / f.length);
+  if (pttHeld) { mic.ptt.push(f); return; }
+  if (!handsFree) return;
+  const thr = Math.max(.012, mic.floor * 3) * (speaking ? 3 : 1);   // the room's playback must not trip it
+  if (!mic.speech) {
+    mic.floor = mic.floor * .97 + Math.min(rms, .05) * .03;
+    mic.preroll.push(f); if (mic.preroll.length > 5) mic.preroll.shift();
+    if (rms > thr) {
+      mic.speech = [...mic.preroll, f]; mic.preroll = []; mic.quietMs = 0; mic.voicedMs = FRAME_MS;
+      clearTimeout(finishTimer);                       // more speech: append, restart the finish wait
+      listeningNow = true;
+      if (!speaking) reading("activity", "LISTENING", "live");
+    }
+    return;
+  }
+  mic.speech.push(f);
+  if (rms > thr) { mic.quietMs = 0; mic.voicedMs += FRAME_MS; } else mic.quietMs += FRAME_MS;
+  if (mic.quietMs >= SILENCE_MS) {
+    const frames = mic.speech, voiced = mic.voicedMs; mic.speech = null;
+    if (voiced < MIN_UTTERANCE_MS) { if (!pending) settle(); return; }   // a click, a cough
+    pending = pending ? pending.concat(frames) : frames;
+    const endAt = performance.now() - SILENCE_MS;   // when the voice actually stopped
+    finishTimer = setTimeout(() => { const p = pending; pending = null; dispatchHandsFree(join(p), endAt); }, FINISH_MS);
+  }
+}
+function settle() { listeningNow = false; if (!speaking && !turnBusy) reading("activity", "STANDING BY", ""); }
+
+async function hearWav(samples, which) {
+  const t0 = performance.now();
+  const r = await api("/hear?model=" + which, wav(samples), true);
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || "ears down");
+  const d = await r.json();
+  return { text: (d.text || "").trim(), secs: d.seconds, ms: performance.now() - t0 };
+}
+async function dispatchHandsFree(samples, endAt) {
+  listeningNow = false;
+  try {
+    if (speaking) {                                  // over the voice, only stop and wait are heard
+      const { text } = await hearWav(samples, "wake");
+      const w = text.toLowerCase();
+      if (/^\W*(?:(?:hey[\s,]+)?spark)?[\s,]*stop\b/.test(w)) return stopSpeaking();
+      if (/^\W*(?:(?:hey[\s,]+)?spark)?[\s,]*wait\b/.test(w)) {
+        paused = true; if (NOW_PLAYING) NOW_PLAYING.pause(); return reading("activity", "WAITING", "");
+      }
+      const said = new Set(answerEl.textContent.toLowerCase().match(/[a-z]+/g) || []);
+      const words = w.match(/[a-z]+/g) || [];
+      if (words.length >= 3 && words.filter((x) => said.has(x)).length / words.length > .6 && ++echoHits >= 2)
+        setAnswer("Headphones are required: the room's playback is reaching the microphone.", true);
+      return;
+    }
+    if (paused) { paused = false; if (NOW_PLAYING) NOW_PLAYING.resume(); reading("activity", "SPEAKING", ""); return; }
+    if (holdCommand) { holdCommand = false; clearTimeout(holdTimer); return command(samples, false, endAt); }
+    const wake = await hearWav(samples, "wake");
+    const m = wake.text.match(ALIAS);
+    if (!m) return settle();                          // no alias: discarded, not shown, not posted
+    if (!wake.text.slice(m[0].length).replace(/\W/g, "")) {
+      holdCommand = true; holdTimer = setTimeout(() => { holdCommand = false; }, 10000);
+      settle(); return speak("Still here.");
+    }
+    return command(samples, true, endAt);
+  } catch (e) {
+    reading("ears", "EARS DOWN", "warn"); settle();
+  }
+}
+async function command(samples, stripAlias, endAt) {
+  reading("activity", "LISTENING", "live");
+  let h;
+  try { h = await hearWav(samples, "command"); } catch { reading("ears", "EARS DOWN", "warn"); return settle(); }
+  let text = h.text;
+  if (stripAlias) text = text.replace(ALIAS, "");
+  if (!text.replace(/\W/g, "")) return settle();
+  reading("activity", text, "heard");
+  window.__spark.lastHeard = { text, serverSecs: h.secs, roundTripMs: h.ms,
+    endToScreenMs: endAt ? performance.now() - endAt : null };
+  await new Promise((r) => setTimeout(r, 450));      // the heard words stay readable a moment
+  listeningNow = false;
+  turn(text, h.secs);
+}
+
+async function setHandsFree(on) {
+  if (on && !(await micOn())) on = false;
+  handsFree = on;
+  hfBtn.textContent = on ? "HANDS-FREE ON" : "HANDS-FREE OFF";
+  hfBtn.classList.toggle("on", on); hfBtn.setAttribute("aria-pressed", String(on));
+  if (!on && !pttHeld) micOff();
+}
+hfBtn.addEventListener("click", () => { if (hfBtn.getAttribute("aria-disabled") !== "true") setHandsFree(!handsFree); });
+
+async function pttDown(e) {
+  if (pttBtn.getAttribute("aria-disabled") === "true" || pttHeld) return;
+  e.preventDefault();
+  if (!(await micOn())) return;
+  stopSpeaking();
+  pttHeld = true; mic.ptt = []; pttBtn.classList.add("held");
+  listeningNow = true; reading("activity", "LISTENING", "live");
+}
+function pttUp() {
+  if (!pttHeld) return;
+  pttHeld = false; pttBtn.classList.remove("held");
+  const frames = mic.ptt; mic.ptt = [];
+  const endAt = performance.now();
+  if (!handsFree) micOff();
+  if (frames.length * FRAME_MS < MIN_UTTERANCE_MS) return settle();
+  command(join(frames), false, endAt);                             // push-to-talk skips the wake alias
+}
+pttBtn.addEventListener("pointerdown", pttDown);
+addEventListener("pointerup", pttUp); addEventListener("pointercancel", pttUp);
+pttBtn.addEventListener("keydown", (e) => { if ((e.key === " " || e.key === "Enter") && !e.repeat) pttDown(e); });
+pttBtn.addEventListener("keyup", (e) => { if (e.key === " " || e.key === "Enter") pttUp(); });
+
+// ── boot ──────────────────────────────────────────────────────────────
+if (REMOTE) {                      // the web viewer: no ask line, no ears, no voice
+  for (const el of [ask, hfBtn, pttBtn]) { el.hidden = true; el.disabled = true; el.setAttribute("aria-disabled", "true"); }
+  pollHealth();
+  setInterval(() => pollHealth(), 5000);
+} else {
+if ("speechSynthesis" in window) speechSynthesis.getVoices();      // load the list early
+pollHealth(true).then((h) => { postHosts(); if (h && h.boot_line) speak("Still here."); });
+setInterval(() => pollHealth(), 5000);
+setInterval(postHosts, 30000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+[
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\BOOKS COMPLETE POOL\\FULL_STACK_TESTING\\MASTER_POOL_LEDGER.md",
+    "module_id": "FULL_STACK_TESTING",
+    "domain": "FULL_STACK_WEB",
+    "source": "Full Stack Testing: A Practical Guide for Delivering High Quality Software (Gayathri Mohan)",
+    "type": "master_ledger",
+    "approx_tokens": 26840,
+    "counts": {
+      "AXIOM": 103,
+      "RULE": 77,
+      "TRAP": 50,
+      "CHECK": 57
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-103",
+      "RULE": "RULE-001..RULE-077",
+      "TRAP": "TRAP-001..TRAP-050",
+      "CHECK": "CHECK-001..CHECK-057"
+    },
+    "chunks": [
+      "FULL_STACK_TESTING_CHUNK_001_",
+      "FULL_STACK_TESTING_CHUNK_002_",
+      "FULL_STACK_TESTING_CHUNK_003_",
+      "FULL_STACK_TESTING_CHUNK_004_",
+      "FULL_STACK_TESTING_CHUNK_005_",
+      "FULL_STACK_TESTING_CHUNK_006_",
+      "FULL_STACK_TESTING_CHUNK_007_",
+      "FULL_STACK_TESTING_CHUNK_008_",
+      "FULL_STACK_TESTING_CHUNK_009_",
+      "FULL_STACK_TESTING_CHUNK_010_",
+      "FULL_STACK_TESTING_CHUNK_011_",
+      "FULL_STACK_TESTING_CHUNK_012_",
+      "FULL_STACK_TESTING_CHUNK_013_",
+      "FULL_STACK_TESTING_CHUNK_014_",
+      "FULL_STACK_TESTING_CHUNK_015_",
+      "FULL_STACK_TESTING_CHUNK_016_"
+    ],
+    "superseded_ids": [],
+    "declared_total": 12,
+    "ids_repeat": false
+  }
+]

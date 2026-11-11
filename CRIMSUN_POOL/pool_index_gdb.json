@@ -1,0 +1,586 @@
+[
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\ARCHITECTURAL_LEVEL_DESIGN_TOTTEN_2ND_ED_POOL_MODULE.md",
+    "module_id": "ARCHITECTURAL_LEVEL_DESIGN_TOTTEN_2ND_ED",
+    "domain": "GAME_LEVEL_DESIGN | SPATIAL_DESIGN | EXPERIENTIAL_DESIGN",
+    "source": "\"An Architectural Approach to Level Design, Second Edition\" by Christopher W. Totten",
+    "type": "module",
+    "approx_tokens": 20373,
+    "counts": {
+      "AXIOM": 101,
+      "RULE": 58,
+      "TRAP": 19,
+      "CHECK": 48
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-101",
+      "RULE": "RULE-001..RULE-058",
+      "TRAP": "TRAP-001..TRAP-019",
+      "CHECK": "CHECK-001..CHECK-048"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 318,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\COLLISION_DETECTION_ERICSON_2005.md",
+    "module_id": "MODULE_COLLISION_DETECTION_ERICSON_2005",
+    "domain": "GAME_ENGINE | PHYSICS | COMPUTATIONAL_GEOMETRY",
+    "source": "Real-Time Collision Detection by Christer Ericson (Morgan Kaufmann, 2005)",
+    "type": "module",
+    "approx_tokens": 5590,
+    "counts": {
+      "AXIOM": 20,
+      "RULE": 20,
+      "TRAP": 15,
+      "CHECK": 16
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-020",
+      "RULE": "RULE-001..RULE-020",
+      "TRAP": "TRAP-001..TRAP-015",
+      "CHECK": "CHECK-001..CHECK-016"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 62,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\DESIGN_PSYCHOLOGY_NORMAN_DOET.md",
+    "module_id": "DESIGN_PSYCHOLOGY_NORMAN_DOET",
+    "domain": "DESIGN_PSYCHOLOGY | UX_DESIGN | HUMAN_FACTORS | PRODUCT_DESIGN",
+    "source": "The Design of Everyday Things (Donald A. Norman, ~288 pages / ~90,000 words)",
+    "type": "module",
+    "approx_tokens": 4626,
+    "counts": {
+      "AXIOM": 20,
+      "RULE": 14,
+      "TRAP": 12,
+      "CHECK": 12
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-020",
+      "RULE": "RULE-001..RULE-014",
+      "TRAP": "TRAP-001..TRAP-012",
+      "CHECK": "CHECK-001..CHECK-012"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 42,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\DOD_Fabian_PoolModule_v1_0.md",
+    "module_id": "GAME_ENGINE_DATA_ORIENTED_DESIGN_FABIAN",
+    "domain": "GAME_ENGINE | SYSTEMS_PROGRAMMING | PERFORMANCE_ARCHITECTURE",
+    "source": "Data-Oriented Design by Richard Fabian (Full Extraction)",
+    "type": "module",
+    "approx_tokens": 6748,
+    "counts": {
+      "AXIOM": 29,
+      "RULE": 24,
+      "TRAP": 20,
+      "CHECK": 20
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-029",
+      "RULE": "RULE-001..RULE-024",
+      "TRAP": "TRAP-001..TRAP-020",
+      "CHECK": "CHECK-001..CHECK-020"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 89,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\GAME_AI_BUCKLAND_2005_POOL_MODULE.md",
+    "module_id": "GAME_AI_BUCKLAND_2005",
+    "domain": "GAME_ENGINE | GAME_AI | AGENT_ARCHITECTURE",
+    "source": "Programming Game AI by Example (Mat Buckland, 2005)",
+    "type": "module",
+    "approx_tokens": 7840,
+    "counts": {
+      "AXIOM": 40,
+      "RULE": 30,
+      "TRAP": 25,
+      "CHECK": 25
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-040",
+      "RULE": "RULE-001..RULE-030",
+      "TRAP": "TRAP-001..TRAP-025",
+      "CHECK": "CHECK-001..CHECK-025"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 89,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\GAME_DESIGN_FUNDAMENTALS_ROGERS.md",
+    "module_id": "MODULE_GAME_DESIGN_FUNDAMENTALS_ROGERS",
+    "domain": "GAME_DESIGN",
+    "source": "Level Up! The Guide to Great Video Game Design (Scott Rogers, 2010)",
+    "type": "module",
+    "approx_tokens": 6392,
+    "counts": {
+      "AXIOM": 20,
+      "RULE": 25,
+      "TRAP": 20,
+      "CHECK": 20
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-020",
+      "RULE": "RULE-001..RULE-025",
+      "TRAP": "TRAP-001..TRAP-020",
+      "CHECK": "CHECK-001..CHECK-020"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 76,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\GAME_DESIGN_LENS_FRAMEWORK_10th_ANNIV_v1_0.md",
+    "module_id": "MODULE_GAME_DESIGN_LENS_FRAMEWORK",
+    "domain": "GAME_DESIGN",
+    "source": "The Art of Game Design: A Book of Lenses (3rd Edition, 10th Anniversary) \u2014 Jesse Schell",
+    "type": "module",
+    "approx_tokens": 19790,
+    "counts": {
+      "AXIOM": 189,
+      "RULE": 100,
+      "TRAP": 70,
+      "CHECK": 60
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-189",
+      "RULE": "RULE-001..RULE-100",
+      "TRAP": "TRAP-001..TRAP-070",
+      "CHECK": "CHECK-001..CHECK-060"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 189,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\GAME_DESIGN_LENS_METHODOLOGY_SCHELL.md",
+    "module_id": "MODULE_GAME_DESIGN_LENS_METHODOLOGY_SCHELL",
+    "domain": "GAME_DESIGN",
+    "source": "The Art of Game Design: A Book of Lenses (Jesse Schell) \u2014 Front Matter through Chapter 10",
+    "type": "module",
+    "approx_tokens": 11704,
+    "counts": {
+      "AXIOM": 80,
+      "RULE": 40,
+      "TRAP": 40,
+      "CHECK": 30
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-080",
+      "RULE": "RULE-001..RULE-040",
+      "TRAP": "TRAP-001..TRAP-040",
+      "CHECK": "CHECK-001..CHECK-030"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 115,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\GAME_DEV_PRODUCTION_BLOOD_SWEAT_PIXELS.md",
+    "module_id": "GAME_DEV_PRODUCTION_BLOOD_SWEAT_PIXELS",
+    "domain": "GAME_PRODUCTION | STUDIO_MANAGEMENT | PROJECT_MANAGEMENT",
+    "source": "Blood, Sweat, and Pixels by Jason Schreier (Harper, 2017)",
+    "type": "module",
+    "approx_tokens": 9071,
+    "counts": {
+      "AXIOM": 30,
+      "RULE": 28,
+      "TRAP": 26,
+      "CHECK": 25
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-030",
+      "RULE": "RULE-001..RULE-028",
+      "TRAP": "TRAP-001..TRAP-026",
+      "CHECK": "CHECK-001..CHECK-025"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 89,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\GAME_ENGINE_ARCHITECTURE_GREGORY_3E_POOL_MODULE.md",
+    "module_id": "GAME_ENGINE_ARCHITECTURE_GREGORY_3E",
+    "domain": "GAME_ENGINE",
+    "source": "Game Engine Architecture (Third Edition) by Jason Gregory (CRC Press, 2018)",
+    "type": "module",
+    "approx_tokens": 6475,
+    "counts": {
+      "AXIOM": 25,
+      "RULE": 22,
+      "TRAP": 20,
+      "CHECK": 25
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-025",
+      "RULE": "RULE-001..RULE-022",
+      "TRAP": "TRAP-001..TRAP-020",
+      "CHECK": "CHECK-001..CHECK-025"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 47,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\GAME_ENGINE_GAME_CODING_COMPLETE_4TH_ED.md",
+    "module_id": "MODULE_GAME_ENGINE_GAME_CODING_COMPLETE_4TH_ED",
+    "domain": "GAME_ENGINE",
+    "source": "Game Coding Complete, Fourth Edition (Mike McShaffry & David \"Rez\" Graham)",
+    "type": "module",
+    "approx_tokens": 9168,
+    "counts": {
+      "AXIOM": 50,
+      "RULE": 24,
+      "TRAP": 25,
+      "CHECK": 28
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-050",
+      "RULE": "RULE-001..RULE-024",
+      "TRAP": "TRAP-001..TRAP-025",
+      "CHECK": "CHECK-001..CHECK-028"
+    },
+    "chunks": [],
+    "superseded_ids": [
+      "AXIOM-016"
+    ],
+    "declared_total": 88,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\GAME_NARRATIVE_TOOLBOX_Pool_Module_v1.md",
+    "module_id": "GAME_NARRATIVE_TOOLBOX",
+    "domain": "GAME_NARRATIVE_DESIGN",
+    "source": "The Advanced Game Narrative Toolbox (Heussner, Tobias, ed.)",
+    "type": "module",
+    "approx_tokens": 18998,
+    "counts": {
+      "AXIOM": 67,
+      "RULE": 74,
+      "TRAP": 50,
+      "CHECK": 72
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-067",
+      "RULE": "RULE-001..RULE-074",
+      "TRAP": "TRAP-001..TRAP-050",
+      "CHECK": "CHECK-001..CHECK-072"
+    },
+    "chunks": [],
+    "superseded_ids": [
+      "AXIOM-061",
+      "AXIOM-062",
+      "AXIOM-063",
+      "AXIOM-066",
+      "AXIOM-067"
+    ],
+    "declared_total": 263,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\GAME_PRODUCTION_FIELD_THEORY_KEOGH_2023.md",
+    "module_id": "GAME_PRODUCTION_FIELD_THEORY_KEOGH_2023",
+    "domain": "GAME_STUDIES | CULTURAL_PRODUCTION | LABOR_STUDIES | MEDIA_INDUSTRY",
+    "source": "The Videogame Industry Does Not Exist: Why We Should Think Beyond Commercial Game Production (Brendan Keogh, MIT Press, 2023)",
+    "type": "module",
+    "approx_tokens": 5642,
+    "counts": {
+      "AXIOM": 22,
+      "RULE": 16,
+      "TRAP": 15,
+      "CHECK": 17
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-022",
+      "RULE": "RULE-001..RULE-016",
+      "TRAP": "TRAP-001..TRAP-015",
+      "CHECK": "CHECK-001..CHECK-017"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 68,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\GAME_PROGRAMMING_PATTERNS_NYSTROM_POOL_MODULE_v1.md",
+    "module_id": "GAME_PROGRAMMING_PATTERNS_NYSTROM",
+    "domain": "GAME_ENGINE | SOFTWARE_ARCHITECTURE | DESIGN_PATTERNS",
+    "source": "Game Programming Patterns by Robert Nystrom",
+    "type": "module",
+    "approx_tokens": 8170,
+    "counts": {
+      "AXIOM": 35,
+      "RULE": 30,
+      "TRAP": 23,
+      "CHECK": 24
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-035",
+      "RULE": "RULE-001..RULE-030",
+      "TRAP": "TRAP-001..TRAP-023",
+      "CHECK": "CHECK-001..CHECK-024"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 88,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\KOJIMA_CREATIVE_GENE_MEMETICS.md",
+    "module_id": "MODULE_KOJIMA_CREATIVE_GENE_MEMETICS",
+    "domain": "CREATIVE_PROCESS | MEDIA_THEORY | GAME_DESIGN_PHILOSOPHY",
+    "source": "\"The Creative Gene\" by Hideo Kojima (Viz Media, 2021; orig. Shincho Bunko, 2019)",
+    "type": "module",
+    "approx_tokens": 4496,
+    "counts": {
+      "AXIOM": 14,
+      "RULE": 15,
+      "TRAP": 10,
+      "CHECK": 10
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-014",
+      "RULE": "RULE-001..RULE-015",
+      "TRAP": "TRAP-001..TRAP-010",
+      "CHECK": "CHECK-001..CHECK-010"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 47,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\PATTERN_LANGUAGE_POOL_MODULE_v1_0.md",
+    "module_id": "PATTERN_LANGUAGE_TOWNS_BUILDINGS_CONSTRUCTION",
+    "domain": "ARCHITECTURE_URBANISM_SOCIAL_DESIGN",
+    "source": "A Pattern Language: Towns, Buildings, Construction \u2014 Christopher Alexander et al. (Introductory Material + Towns Patterns 1\u20137 + Full Master Pattern List)",
+    "type": "module",
+    "approx_tokens": 7976,
+    "counts": {
+      "AXIOM": 44,
+      "RULE": 25,
+      "TRAP": 20,
+      "CHECK": 20
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-044",
+      "RULE": "RULE-001..RULE-025",
+      "TRAP": "TRAP-001..TRAP-020",
+      "CHECK": "CHECK-001..CHECK-020"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 109,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\PERFORMANCE_OPTIMIZATION_MATURE.md",
+    "module_id": "MODULE_PERFORMANCE_OPTIMIZATION_MATURE",
+    "domain": "SYSTEMS_PERFORMANCE | SOFTWARE_ENGINEERING | PRODUCTION_SYSTEMS",
+    "source": "\"Mature Optimization Handbook\" by Carlos Bueno (Facebook, 2013)",
+    "type": "module",
+    "approx_tokens": 5516,
+    "counts": {
+      "AXIOM": 20,
+      "RULE": 20,
+      "TRAP": 15,
+      "CHECK": 15
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-020",
+      "RULE": "RULE-001..RULE-020",
+      "TRAP": "TRAP-001..TRAP-015",
+      "CHECK": "CHECK-001..CHECK-015"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 66,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\POOL_MODULE_GAME_DESIGN_PLAYFUL_PRODUCTION_v1_0.md",
+    "module_id": "CRIMSUN_POOL_MODULE_GAME_DESIGN_PLAYFUL_PRODUCTION_PROCESS",
+    "domain": "GAME_DESIGN | PRODUCTION_METHODOLOGY | PROJECT_MANAGEMENT",
+    "source": "\"A Playful Production Process: For Game Designers (and Everyone)\" by Richard Lemarchand (MIT Press, 2021)",
+    "type": "module",
+    "approx_tokens": 11385,
+    "counts": {
+      "AXIOM": 40,
+      "RULE": 40,
+      "TRAP": 30,
+      "CHECK": 36
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-040",
+      "RULE": "RULE-001..RULE-040",
+      "TRAP": "TRAP-001..TRAP-030",
+      "CHECK": "CHECK-001..CHECK-036"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 146,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\POOL_MODULE_GAME_NARRATIVE_DESIGN_v1_0.md",
+    "module_id": "GAME_NARRATIVE_DESIGN_TOOLBOX",
+    "domain": "GAME_NARRATIVE_DESIGN",
+    "source": "The Game Narrative Toolbox, Second Edition (Heussner, Finley, Hepler, Lemay)",
+    "type": "module",
+    "approx_tokens": 4322,
+    "counts": {
+      "AXIOM": 20,
+      "RULE": 15,
+      "TRAP": 15,
+      "CHECK": 17
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-020",
+      "RULE": "RULE-001..RULE-015",
+      "TRAP": "TRAP-001..TRAP-015",
+      "CHECK": "CHECK-001..CHECK-017"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 47,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\POOL_MODULE_SYSTEMIC_GAME_DESIGN_SELLERS_2018.md",
+    "module_id": "SYSTEMIC_GAME_DESIGN_SELLERS_2018",
+    "domain": "GAME_DESIGN | SYSTEMS_THINKING | DESIGN_THEORY",
+    "source": "Advanced Game Design: A Systems Approach (Michael Sellers, 2018)",
+    "type": "module",
+    "approx_tokens": 6428,
+    "counts": {
+      "AXIOM": 30,
+      "RULE": 27,
+      "TRAP": 17,
+      "CHECK": 20
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-030",
+      "RULE": "RULE-001..RULE-027",
+      "TRAP": "TRAP-001..TRAP-017",
+      "CHECK": "CHECK-001..CHECK-020"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 86,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\SOFTWARE_ARCHITECTURE_FUNDAMENTALS_POOL_MODULE.md",
+    "module_id": "SOFTWARE_ARCHITECTURE_FUNDAMENTALS",
+    "domain": "SOFTWARE_ARCHITECTURE",
+    "source": "Fundamentals of Software Architecture, 2nd Edition (Mark Richards & Neal Ford, O'Reilly 2025)",
+    "type": "module",
+    "approx_tokens": 12968,
+    "counts": {
+      "AXIOM": 72,
+      "RULE": 50,
+      "TRAP": 20,
+      "CHECK": 25
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-072",
+      "RULE": "RULE-001..RULE-050",
+      "TRAP": "TRAP-001..TRAP-020",
+      "CHECK": "CHECK-001..CHECK-025"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 167,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\SOFTWARE_PROJECT_MANAGEMENT_MMM_v1_0.md",
+    "module_id": "SOFTWARE_PROJECT_MANAGEMENT_MMM",
+    "domain": "SOFTWARE_PROJECT_MANAGEMENT | SOFTWARE_ENGINEERING | SYSTEM_DESIGN",
+    "source": "The Mythical Man-Month: Essays on Software Engineering, Anniversary Edition (1995)",
+    "type": "module",
+    "approx_tokens": 8377,
+    "counts": {
+      "AXIOM": 30,
+      "RULE": 24,
+      "TRAP": 20,
+      "CHECK": 20
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-030",
+      "RULE": "RULE-001..RULE-024",
+      "TRAP": "TRAP-001..TRAP-020",
+      "CHECK": "CHECK-001..CHECK-020"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 87,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\SOLO_INDIE_GAME_DEV_MINDSET_AND_SHIP.md",
+    "module_id": "SOLO_INDIE_GAME_DEV_MINDSET_AND_SHIP",
+    "domain": "GAME_PRODUCTION | SOLO_DEVELOPMENT | PROJECT_MANAGEMENT | INDIE",
+    "source": "How to Make a Video Game All By Yourself \u2014 Matt Hackett (2022, Valadria, v1.0.11)",
+    "type": "module",
+    "approx_tokens": 13768,
+    "counts": {
+      "AXIOM": 12,
+      "RULE": 75,
+      "TRAP": 50,
+      "CHECK": 50
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-012",
+      "RULE": "RULE-001..RULE-075",
+      "TRAP": "TRAP-001..TRAP-050",
+      "CHECK": "CHECK-001..CHECK-050"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 187,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Game Dev Books\\THEORY_OF_FUN_GAME_DESIGN_POOL_MODULE_v1.md",
+    "module_id": "THEORY_OF_FUN_GAME_DESIGN_KOSTER",
+    "domain": "GAME_DESIGN | COGNITIVE_SCIENCE | PHILOSOPHY",
+    "source": "A Theory of Fun for Game Design, 2nd Edition (10th Anniversary) \u2014 Raph Koster",
+    "type": "module",
+    "approx_tokens": 4784,
+    "counts": {
+      "AXIOM": 15,
+      "RULE": 15,
+      "TRAP": 12,
+      "CHECK": 14
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-015",
+      "RULE": "RULE-001..RULE-015",
+      "TRAP": "TRAP-001..TRAP-012",
+      "CHECK": "CHECK-001..CHECK-014"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 57,
+    "ids_repeat": false
+  }
+]

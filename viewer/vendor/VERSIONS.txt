@@ -1,0 +1,20 @@
+SPARK SOL viewer/vendor — what was actually saved, 2026-11-10
+Every file below is the package's own published build, copied unmodified.
+Nothing on the page loads from a CDN.
+
+3d-force-graph   1.80.2   MIT   dist/3d-force-graph.min.js (UMD, bundles three r186)
+  npm tarball sha256 89720e17293108a10aa1ab049b011d311b13c6b22d39c2fe5c64c3caac9d704d
+three            0.186.0  MIT   build/three.module.js + build/three.core.js
+  npm tarball sha256 61eeff9d7616005c9a481c796f52287d81fbbbc0d55eaca5565322924252c1aa
+  Why a second copy: the UMD graph does not expose THREE, and the star sprites
+  and the dust field need Sprite, Points and CanvasTexture. Same revision (186)
+  as the bundled copy. three prints one "multiple instances" console warning.
+@fontsource/literata              5.3.0  OFL-1.1  latin + latin-ext, 400 normal/italic
+  npm tarball sha256 b9335958dc362b0e7e4268098550bc0cb93ab4c68a2db9bc48c67154abbd75c9
+@fontsource/schibsted-grotesk     5.3.0  OFL-1.1  latin + latin-ext, 400/500
+  npm tarball sha256 2dd3c8fc0a5f5731bf5e01904fef6ce67aad9b00873ca7a1b4c731c46d003acd
+@fontsource/atkinson-hyperlegible 5.3.0  OFL-1.1  latin + latin-ext, 400/700
+  npm tarball sha256 6c22186d05f555e1ebf58431ef2c154445e64b760e381c483a56a0a0c5dc2d43
+
+brand/spark-sol-lockup.png  cropped from brand/Flaxoen Spiral Spark Logo.png
+brand/spark-sol-mark.png    (2172x724), ground #0a1023 keyed to alpha. Not redrawn.

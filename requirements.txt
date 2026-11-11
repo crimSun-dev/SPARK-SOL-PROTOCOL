@@ -1,0 +1,5 @@
+# server.py, voice.py, drill.py, preflight.py: standard library only.
+# hear.py: one third-party import.
+faster-whisper==1.2.1
+# PyAV 19 removed metadata_errors and breaks faster-whisper 1.2.1.
+av==18.1.0

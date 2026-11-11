@@ -1,0 +1,18 @@
+# Written on every start from the memory read. Holds memory values.
+viewer/graph-data.js
+viewer/graph-data.js.tmp
+# The brain shelf, including a cloud key once one is set.
+config.json
+# Private captures: the markdown file is the only copy, keep it off any remote.
+notes/
+# Rendered speech.
+cache/
+__pycache__/
+# build.py full-text index of the Workspace, pools and skills. Local only.
+index/
+# Third-party prompt packs and the one-off build prompt: kept local.
+Build-Jarvis-Fully-Offline-Prompt-Pack.pdf
+Run-Jarvis-Fully-Local-Prompt-Pack.pdf
+CLAUDE_BUILD_PROMPT.md
+# Per-machine agent settings.
+.claude/settings.local.json

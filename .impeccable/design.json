@@ -1,0 +1,490 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-10T23:00:00+07:00",
+  "title": "Design System: SPARK SOL",
+  "extensions": {
+    "colorMeta": {
+      "void": {
+        "role": "neutral",
+        "displayName": "Indigo Void",
+        "canonical": "oklch(18.7% 0.038 268.6)",
+        "tonalRamp": [
+          "#050a1b",
+          "#1c2337",
+          "#373f54",
+          "#555d74",
+          "#747d95",
+          "#949eb7",
+          "#bac4de",
+          "#e4eeff"
+        ]
+      },
+      "void-lift": {
+        "role": "neutral",
+        "displayName": "Void Lift",
+        "canonical": "oklch(23.6% 0.044 269.5)",
+        "tonalRamp": [
+          "#05091d",
+          "#1b2339",
+          "#363f57",
+          "#545d77",
+          "#737d98",
+          "#939eba",
+          "#b9c4e1",
+          "#e3eeff"
+        ]
+      },
+      "bone": {
+        "role": "primary",
+        "displayName": "Bone Ink",
+        "canonical": "oklch(92.7% 0.026 84.6)",
+        "tonalRamp": [
+          "#100a01",
+          "#2a2315",
+          "#463f30",
+          "#645d4d",
+          "#847c6c",
+          "#a69d8d",
+          "#ccc3b2",
+          "#f7eedb"
+        ]
+      },
+      "bone-dim": {
+        "role": "neutral",
+        "displayName": "Chalk Bone",
+        "canonical": "oklch(68.4% 0.029 80.2)",
+        "tonalRamp": [
+          "#110a01",
+          "#2b2314",
+          "#483e2e",
+          "#665c4b",
+          "#867c6a",
+          "#a89d8b",
+          "#cec3b0",
+          "#f9edd9"
+        ]
+      },
+      "star-core": {
+        "role": "neutral",
+        "displayName": "Star Core",
+        "canonical": "oklch(95.5% 0.014 88.7)",
+        "tonalRamp": [
+          "#0e0b05",
+          "#27241c",
+          "#433f37",
+          "#615d55",
+          "#817d74",
+          "#a29e95",
+          "#c8c4ba",
+          "#f2eee4"
+        ]
+      },
+      "warning": {
+        "role": "tertiary",
+        "displayName": "Fault Red",
+        "canonical": "oklch(66.4% 0.158 35.8)",
+        "tonalRamp": [
+          "#2d0000",
+          "#5a0000",
+          "#7e0000",
+          "#a32f0a",
+          "#c95333",
+          "#f07555",
+          "#ff9c7a",
+          "#ffd2b7"
+        ]
+      },
+      "filament": {
+        "role": "secondary",
+        "displayName": "Verdigris Filament",
+        "canonical": "oklch(75.1% 0.074 170.9)",
+        "tonalRamp": [
+          "#001307",
+          "#002f1f",
+          "#004c3a",
+          "#296b58",
+          "#4c8c77",
+          "#6dae98",
+          "#93d4be",
+          "#bcffe8"
+        ],
+        "note": "Reserved for local and live. Declared on :root, unused in this build."
+      },
+      "dye-identity": {
+        "role": "category",
+        "displayName": "Category Dye: Identity",
+        "canonical": "oklch(77.3% 0.059 89.6)",
+        "tonalRamp": [
+          "#150800",
+          "#2f2200",
+          "#4c3e17",
+          "#6b5c35",
+          "#8b7c54",
+          "#ad9d74",
+          "#d3c399",
+          "#feedc2"
+        ]
+      },
+      "dye-preferences": {
+        "role": "category",
+        "displayName": "Category Dye: Preferences",
+        "canonical": "oklch(73.9% 0.057 314.4)",
+        "tonalRamp": [
+          "#14031b",
+          "#2e1b37",
+          "#4b3655",
+          "#6a5474",
+          "#8a7395",
+          "#ac94b8",
+          "#d2bade",
+          "#fde4ff"
+        ]
+      },
+      "dye-projects": {
+        "role": "category",
+        "displayName": "Category Dye: Projects",
+        "canonical": "oklch(69.7% 0.043 250.7)",
+        "tonalRamp": [
+          "#000b1c",
+          "#132538",
+          "#2e4156",
+          "#4b6076",
+          "#6a8097",
+          "#8ba1b9",
+          "#b0c7e0",
+          "#daf1ff"
+        ]
+      },
+      "dye-relationships": {
+        "role": "category",
+        "displayName": "Category Dye: Relationships",
+        "canonical": "oklch(69.8% 0.047 4.3)",
+        "tonalRamp": [
+          "#1a0309",
+          "#371a21",
+          "#55353d",
+          "#75535a",
+          "#96727a",
+          "#b9939b",
+          "#e0b8c0",
+          "#ffe2eb"
+        ]
+      },
+      "dye-wishes": {
+        "role": "category",
+        "displayName": "Category Dye: Wishes",
+        "canonical": "oklch(74.1% 0.052 61.0)",
+        "tonalRamp": [
+          "#1a0500",
+          "#361d06",
+          "#543922",
+          "#74573f",
+          "#95765e",
+          "#b7977e",
+          "#debda2",
+          "#ffe7cc"
+        ]
+      },
+      "dye-notes": {
+        "role": "category",
+        "displayName": "Category Dye: Notes",
+        "canonical": "oklch(71.1% 0.042 154.1)",
+        "tonalRamp": [
+          "#001004",
+          "#122a1a",
+          "#2e4636",
+          "#4b6553",
+          "#6a8572",
+          "#8ba793",
+          "#b0cdb8",
+          "#daf7e2"
+        ]
+      },
+      "dye-documents": {
+        "role": "category",
+        "displayName": "Category Dye: Documents",
+        "canonical": "oklch(67.8% 0.024 250.3)",
+        "tonalRamp": [
+          "#040c15",
+          "#1b252f",
+          "#36414c",
+          "#545f6b",
+          "#737f8b",
+          "#94a0ad",
+          "#b9c6d3",
+          "#e3f0fe"
+        ]
+      },
+      "dye-sessions": {
+        "role": "category",
+        "displayName": "Category Dye: Sessions",
+        "canonical": "oklch(65.5% 0.039 249.7)",
+        "tonalRamp": [
+          "#010c1b",
+          "#152536",
+          "#304154",
+          "#4d6073",
+          "#6c8094",
+          "#8da1b6",
+          "#b2c7dd",
+          "#dbf1ff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Fact Value",
+        "purpose": "Short fact value on the record plate."
+      },
+      "title": {
+        "displayName": "Record Title",
+        "purpose": "Record name at the top of the plate."
+      },
+      "body": {
+        "displayName": "Excerpt",
+        "purpose": "Longer record excerpts on the plate."
+      },
+      "body-ui": {
+        "displayName": "Base",
+        "purpose": "Page base text."
+      },
+      "input": {
+        "displayName": "Ask Input",
+        "purpose": "Typed text and placeholder on the floor."
+      },
+      "chart-region": {
+        "displayName": "Region Name",
+        "purpose": "Italic constellation name under each category cluster.",
+        "fontStyle": "italic"
+      },
+      "chart-name": {
+        "displayName": "Star Name",
+        "purpose": "Hovered or keyboard-cursored star name on a leader."
+      },
+      "chart-name-focus": {
+        "displayName": "Focused Star Name",
+        "purpose": "Focused star name on a leader."
+      },
+      "label": {
+        "displayName": "Gauge",
+        "purpose": "Floor status and floor words. Uppercase for instrument readings."
+      },
+      "label-meta": {
+        "displayName": "Gauge Meta",
+        "purpose": "Plate head, plate meta line, protocol note count."
+      }
+    },
+    "shadows": [],
+    "depth": [
+      {
+        "name": "star-rest",
+        "value": "halo 20px dye @50% additive + 2px core dye @78%",
+        "purpose": "Every star at rest."
+      },
+      {
+        "name": "star-hover",
+        "value": "halo @74%, core @100%, scale 1.18",
+        "purpose": "Hovered or keyboard-cursored star."
+      },
+      {
+        "name": "star-focus",
+        "value": "halo @95%, core star-core, scale 1.5, 13px bone ring @70%",
+        "purpose": "The one focused star."
+      },
+      {
+        "name": "link-region",
+        "value": "1px rgba(239,230,212,.3)",
+        "purpose": "Links inside one category."
+      },
+      {
+        "name": "link-touched",
+        "value": "1px rgba(239,230,212,.62)",
+        "purpose": "Any link touching the focused or hovered star; cross-region links are otherwise invisible."
+      },
+      {
+        "name": "dust",
+        "value": "1600 points, radius 1500 to 3100, void-to-bone lerp, 1.3px",
+        "purpose": "Far field for depth. Never interactive."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Plate open and region-name opacity."
+      },
+      {
+        "name": "plate-open",
+        "value": "transform .42s ease-out, opacity .3s ease-out, from translateX(24px)",
+        "purpose": "Record plate entering."
+      },
+      {
+        "name": "plate-close",
+        "value": "transform .28s ease-in, opacity .2s ease-in",
+        "purpose": "Record plate leaving."
+      },
+      {
+        "name": "region-fade",
+        "value": "opacity .4s ease-out",
+        "purpose": "Region names dimming on focus."
+      },
+      {
+        "name": "idle-yaw",
+        "value": "autoRotateSpeed .22, resumes 6s after interaction",
+        "purpose": "The sky's only always-on motion."
+      },
+      {
+        "name": "fly",
+        "value": "1300ms from overview, 900ms star to star, 1100ms back to overview",
+        "purpose": "Camera flies on focus and close."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "no idle yaw, 0ms flies, no transitions",
+        "purpose": "prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "max-width: 799px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Observatory Floor Status",
+      "kind": "custom",
+      "refersTo": "floor-status",
+      "description": "One-line instrument reading on the floor: source, separator, voice.",
+      "html": "<footer class=\"ds-floor\"><p class=\"ds-status\"><span class=\"ds-warn\">MIRROR · 10 NOV</span><span class=\"ds-gap\" aria-hidden=\"true\"></span><span>VOICE not running</span></p></footer>",
+      "css": ".ds-floor { background: var(--void, #0c1224); border-top: 1px solid var(--bone-dim, #a39886); height: 72px; padding: 0 24px; display: flex; align-items: center; } .ds-status { margin: 0; font: 400 14px/1 \"Atkinson Hyperlegible\", system-ui, sans-serif; letter-spacing: .04em; color: var(--bone-dim, #a39886); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-warn { color: var(--warn, #e36a4a); } .ds-gap { display: inline-block; width: 1px; height: 11px; margin: 0 12px; background: var(--bone-dim, #a39886); opacity: .5; vertical-align: -1px; }"
+    },
+    {
+      "name": "Floor Word",
+      "kind": "button",
+      "refersTo": "floor-word",
+      "description": "A control written as an uppercase word. Disabled until the voice server runs.",
+      "html": "<button class=\"ds-word\" type=\"button\" aria-disabled=\"true\" title=\"Needs the voice server\">HANDS-FREE OFF</button>",
+      "css": ".ds-word { background: none; border: 0; padding: 6px 0; font: 400 14px/1 \"Atkinson Hyperlegible\", system-ui, sans-serif; letter-spacing: .04em; color: var(--bone-dim, #a39886); white-space: nowrap; } .ds-word[aria-disabled=\"true\"] { cursor: not-allowed; } .ds-word:focus-visible { outline: 1px solid var(--bone, #efe6d4); outline-offset: 3px; }"
+    },
+    {
+      "name": "Ask Input",
+      "kind": "input",
+      "refersTo": "ask-input",
+      "description": "Underline-only input on the floor. Disabled until answers exist.",
+      "html": "<label class=\"ds-ask\"><input type=\"text\" placeholder=\"Ask the notes\" disabled></label>",
+      "css": ".ds-ask { display: block; width: 320px; background: var(--void, #0c1224); padding: 8px 0; } .ds-ask input { width: 100%; height: 28px; padding: 0 0 4px; margin: 0; background: transparent; border: 0; border-bottom: 1px solid rgba(163,152,134,.45); border-radius: 0; font: 400 16px/1 \"Schibsted Grotesk\", system-ui, sans-serif; color: var(--bone, #efe6d4); } .ds-ask input::placeholder { color: var(--bone-dim, #a39886); opacity: 1; } .ds-ask input:disabled { cursor: not-allowed; } .ds-ask input:focus-visible { outline: 1px solid var(--bone, #efe6d4); outline-offset: 3px; }"
+    },
+    {
+      "name": "Record Plate",
+      "kind": "card",
+      "refersTo": "plate",
+      "description": "Flat void-lift plate with the real record, opened on star focus.",
+      "html": "<aside class=\"ds-plate\"><div class=\"ds-plate-head\"><span class=\"ds-dye\"></span><span class=\"ds-where\">Identity</span><button class=\"ds-close\" type=\"button\">Close</button></div><div class=\"ds-plate-body\"><h2>City</h2><p class=\"ds-key\">identity / city · updated 6 Sept 2026</p><p class=\"ds-value\">Bogor</p></div></aside>",
+      "css": ".ds-plate { width: 380px; background: var(--lift, #161d33); border: 1px solid var(--bone-dim, #a39886); color: var(--bone, #efe6d4); } .ds-plate-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px 13px 20px; border-bottom: 1px solid rgba(163,152,134,.35); font: 400 13px/1 \"Atkinson Hyperlegible\", system-ui, sans-serif; letter-spacing: .04em; color: var(--bone-dim, #a39886); } .ds-dye { width: 8px; height: 8px; border-radius: 50%; background: #c4b48a; } .ds-where { color: var(--bone, #efe6d4); } .ds-close { margin-left: auto; background: none; border: 0; padding: 6px 4px; cursor: pointer; font: inherit; letter-spacing: .04em; color: var(--bone-dim, #a39886); text-transform: uppercase; } .ds-close:hover { color: var(--bone, #efe6d4); } .ds-close:focus-visible { outline: 1px solid var(--bone, #efe6d4); outline-offset: 3px; } .ds-plate-body { padding: 22px 20px 24px; } .ds-plate-body h2 { margin: 0; font: 500 21px/1.22 \"Schibsted Grotesk\", system-ui, sans-serif; letter-spacing: -.005em; } .ds-key { margin: 8px 0 0; font: 400 13px/1.4 \"Atkinson Hyperlegible\", system-ui, sans-serif; letter-spacing: .02em; color: var(--bone-dim, #a39886); } .ds-value { margin: 26px 0 0; font: 400 26px/1.28 Literata, Georgia, serif; }"
+    },
+    {
+      "name": "Record Excerpt",
+      "kind": "custom",
+      "refersTo": "plate-body",
+      "description": "Longer record text on the plate in the reading face.",
+      "html": "<div class=\"ds-excerpt-wrap\"><p class=\"ds-excerpt\">Flaxeon Cloud lock. Product lock: Flaxeon is the living entity. Memory is the backend.</p></div>",
+      "css": ".ds-excerpt-wrap { width: 340px; background: var(--lift, #161d33); padding: 20px; } .ds-excerpt { margin: 0; font: 400 16px/1.62 Literata, Georgia, serif; color: var(--bone, #efe6d4); hyphens: auto; }"
+    },
+    {
+      "name": "Chart Lettering",
+      "kind": "custom",
+      "refersTo": "region-name",
+      "description": "Italic region name under a cluster, and a focused star with ring, leader and name.",
+      "html": "<div class=\"ds-chart\"><svg width=\"240\" height=\"120\" aria-hidden=\"true\"><circle cx=\"60\" cy=\"70\" r=\"2.3\" fill=\"#f4f0e6\"/><circle cx=\"60\" cy=\"70\" r=\"13\" fill=\"none\" stroke=\"#efe6d4\" stroke-width=\"1\" opacity=\".7\"/><polyline points=\"69,61 82,48 92,48\" fill=\"none\" stroke=\"#a39886\" stroke-width=\"1\"/><circle cx=\"130\" cy=\"62\" r=\"2.3\" fill=\"#c4b48a\"/><circle cx=\"150\" cy=\"78\" r=\"2.3\" fill=\"#c4b48a\"/></svg><span class=\"ds-name\">City</span><span class=\"ds-region\">Identity</span></div>",
+      "css": ".ds-chart { position: relative; width: 240px; height: 120px; background: var(--void, #0c1224); } .ds-chart svg { position: absolute; inset: 0; } .ds-name { position: absolute; left: 96px; top: 41px; font: 500 14px/1 \"Schibsted Grotesk\", system-ui, sans-serif; letter-spacing: .01em; color: var(--bone, #efe6d4); } .ds-region { position: absolute; left: 112px; top: 96px; font: italic 400 15px/1 Literata, Georgia, serif; letter-spacing: .03em; color: var(--bone-dim, #a39886); opacity: .9; }"
+    },
+    {
+      "name": "Protocol Count",
+      "kind": "custom",
+      "refersTo": "protocol-count",
+      "description": "Live note count under the lockup.",
+      "html": "<p class=\"ds-count\"><b>23</b> notes</p>",
+      "css": ".ds-count { margin: 0; padding: 8px; background: var(--void, #0c1224); font: 400 13px/1 \"Atkinson Hyperlegible\", system-ui, sans-serif; letter-spacing: .04em; color: var(--bone-dim, #a39886); font-variant-numeric: tabular-nums; } .ds-count b { font-weight: 700; color: var(--bone, #efe6d4); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Observatory Floor",
+    "overview": "The notes are already a sky. SPARK SOL is the floor of the observatory under it: a dark room, one instrument reading at the bottom edge, and the stars taking everything else. The F.L.A.X.E.O.N memory renders as a slowly turning 3D chart in an indigo void, each fact category a loose constellation with one italic name written under it the way a paper star chart names its figures. Chrome is a hairline and a flat plate, nothing more. The page is operated, not browsed: the operator glances at it from an evening desk where the display is the lamp, so the status line must read at a glance and the sky must never shout.\n\nDensity is extremely low by design. At rest the screen holds the lockup and a note count in the upper left, the sky, and a 72px floor carrying the source reading, the voice reading, an inert `Ask the notes` input, and two floor words. Opening a star flies the camera to it, rings it, pins its name on a hairline leader, and slides a 380px plate in from the right with the real record. Nothing else appears. The world is restrained to the point of austerity: the void is the color, bone is the ink, and the category dyes are dim chalk.\n\nConfirmed rejections, carried from the direction contract and the binding brand commitments: no card dashboard, no chat column beside a toy graph, no helmet HUD or visor chrome, no glass, no glow stacks, no tiles, no light theme, no cyan terminal glow. The ember X lives inside the lockup raster and nowhere else.",
+    "keyCharacteristics": [
+      "A full-bleed WebGL sky in an indigo void (not black), with a far bone dust field for depth and slow idle yaw.",
+      "Chart lettering over the sky: italic Literata region names, Schibsted star names on 1px hairline leaders, a thin bone ring on the focused star.",
+      "A 72px observatory floor separated from the sky by a single bone-dim hairline.",
+      "A flat void-lift plate with a 1px bone-dim edge, square corners, no shadow, no blur.",
+      "Three faces with three jobs: Literata reads, Schibsted Grotesk works, Atkinson Hyperlegible gauges.",
+      "All fonts and scripts served from `viewer/vendor/`; the page opens no outside host."
+    ],
+    "rules": [
+      {
+        "name": "The Void Is The Color Rule",
+        "body": "The indigo void and bone ink carry the page. Dyes stay dim at rest (halo at 50%, core at 78%) and only the focused star brightens. No second accent is added \"to make it pop.\"",
+        "section": "colors"
+      },
+      {
+        "name": "The Filament Reserve Rule",
+        "body": "Verdigris means local and live, and nothing else. It is never decoration, never a dye, never a hover color. Until a local system is actually acting, it does not appear.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Ember Pixel Rule",
+        "body": "The family ember appears once, as the X inside the lockup image. It never spreads to the floor, the stars, the status line, or the warning color.",
+        "section": "colors"
+      },
+      {
+        "name": "The Dye Means Category Rule",
+        "body": "On the memory sky a dye means fact category. The planned markdown sky reuses the same hexes as pool dyes per the pinned spec, and the two skies never share a graph, so one hex never carries two meanings on one screen.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three Faces Rule",
+        "body": "Literata reads, Schibsted works, Atkinson gauges. A string's job picks its face; never swap them for variety.",
+        "section": "typography"
+      },
+      {
+        "name": "The Uppercase Is A Reading Rule",
+        "body": "Uppercase is reserved for instrument readings on the floor and for the plate's `Close` control. Names, titles, regions and excerpts stay in their own case.",
+        "section": "typography"
+      },
+      {
+        "name": "The Local Type Rule",
+        "body": "Every face is a self-hosted woff2 under `viewer/vendor/fonts/`. No font CDN, because that host would fail the offline drill.",
+        "section": "typography"
+      },
+      {
+        "name": "The Floor Never Moves Rule",
+        "body": "The 72px floor holds the status and the input at every width and in every state. Plates and skies rearrange around it.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat Plate Rule",
+        "body": "Chrome is a flat rectangle with a hairline edge. Glow belongs to stars, never to UI.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep the void (#0c1224) as the page ground and the WebGL clear color, and let it carry the mood.",
+      "Do use bone for content and bone-dim for readings, meta and hairlines; reach for reduced-alpha bone-dim when a divider must sit quieter than an edge.",
+      "Do give every star its category dye, dim at rest, and reserve star core (#f4f0e6) for the one focused star.",
+      "Do write controls as uppercase Atkinson words on the floor (14px, 0.04em), never as icon buttons or floating circles.",
+      "Do keep the plate flat: void lift, 1px bone-dim edge, square corners, 380px wide on desktop.",
+      "Do show a star's name only on focus, hover, keyboard cursor, or (once built) citation.",
+      "Do respect reduced motion: stop idle yaw, cut flies, drop transitions.",
+      "Do serve every font and script from `viewer/vendor/`."
+    ],
+    "donts": [
+      "Don't use verdigris (#7dbea8) for anything except a local system that is actually acting.",
+      "Don't let the family ember (#ff3b1f) leave the lockup raster, and don't paint the sky, floor or stars in Desk ember or Tempest gold.",
+      "Don't add glass, backdrop blur, outer glow stacks, drop shadows or rounded cards to the chrome.",
+      "Don't label every star on the idle sky or print instructions on it.",
+      "Don't set status in a monospace face.",
+      "Don't add a chat transcript column, a card grid, a left nav, a hamburger, a light theme, or helmet and visor chrome.",
+      "Don't show a dye on the memory sky that means anything other than its category."
+    ]
+  }
+}

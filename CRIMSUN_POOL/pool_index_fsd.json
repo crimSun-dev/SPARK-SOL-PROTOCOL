@@ -1,0 +1,291 @@
+[
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\Books\\FULLSTACK_JS_STRATEGIES_2025_POOL_MODULE.md",
+    "module_id": "FULLSTACK_JS_STRATEGIES_2025",
+    "domain": "FULLSTACK_WEB | BACKEND_WEB | FRONTEND_WEB | DEVOPS | CAREER_DEVELOPMENT",
+    "source": "Full Stack JavaScript Strategies by Milecia McGregor (O'Reilly, 2025)",
+    "type": "module",
+    "approx_tokens": 10562,
+    "counts": {
+      "AXIOM": 50,
+      "RULE": 35,
+      "TRAP": 30,
+      "CHECK": 50
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-050",
+      "RULE": "RULE-001..RULE-035",
+      "TRAP": "TRAP-001..TRAP-030",
+      "CHECK": "CHECK-001..CHECK-050"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 140,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\Books\\FULLSTACK_TESTING_GAYATHRI_MOHAN_2022_POOL_MODULE.md",
+    "module_id": "FULLSTACK_TESTING_GAYATHRI_MOHAN_2022",
+    "domain": "FULLSTACK_TESTING | QUALITY_ENGINEERING | DEVOPS",
+    "source": "Full Stack Testing: A Practical Guide for Delivering High Quality Software (Gayathri Mohan, O'Reilly, 2022)",
+    "type": "module",
+    "approx_tokens": 11066,
+    "counts": {
+      "AXIOM": 23,
+      "RULE": 48,
+      "TRAP": 30,
+      "CHECK": 66
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-023",
+      "RULE": "RULE-001..RULE-048",
+      "TRAP": "TRAP-001..TRAP-030",
+      "CHECK": "CHECK-001..CHECK-066"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 167,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\Books\\FULLSTACK_WEB_MERN_MONGODB_POOL_MODULE.md",
+    "module_id": "FULLSTACK_WEB_MERN_MONGODB",
+    "domain": "FULLSTACK_WEB | BACKEND_WEB | FRONTEND_WEB | DATABASE | DEPLOYMENT",
+    "source": "MERN Stack Web Development For Beginners \u2014 Nathan Sebhastian (Code With Nathan), March 2024, ~267 pages",
+    "type": "module",
+    "approx_tokens": 7553,
+    "counts": {
+      "AXIOM": 50,
+      "RULE": 35,
+      "TRAP": 30,
+      "CHECK": 50
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-050",
+      "RULE": "RULE-001..RULE-035",
+      "TRAP": "TRAP-001..TRAP-030",
+      "CHECK": "CHECK-001..CHECK-050"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 165,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\Books\\FULLSTACK_WEB_SAMMIE_SMITH_PoolModule.md",
+    "module_id": "FULLSTACK_WEB_SAMMIE_SMITH",
+    "domain": "FULLSTACK_WEB",
+    "source": "\"Full Stack Web Development Guide\" by Sammie Smith",
+    "type": "module",
+    "approx_tokens": 5425,
+    "counts": {
+      "AXIOM": 20,
+      "RULE": 20,
+      "TRAP": 14,
+      "CHECK": 20
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-020",
+      "RULE": "RULE-001..RULE-020",
+      "TRAP": "TRAP-001..TRAP-014",
+      "CHECK": "CHECK-001..CHECK-020"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 74,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\Books\\JAVASCRIPT_ALGORITHMS_FULLSTACK_2019_POOL_MODULE.md",
+    "module_id": "MODULE_JAVASCRIPT_ALGORITHMS_FULLSTACK_2019",
+    "domain": "COMPUTER_SCIENCE | ALGORITHMS | DATA_STRUCTURES",
+    "source": "JavaScript Algorithms: The Web Developer's Guide to Data Structures and Algorithms (Oleksii Trekhleb & Sophia Shoemaker, Fullstack.io, 2019)",
+    "type": "module",
+    "approx_tokens": 8603,
+    "counts": {
+      "AXIOM": 50,
+      "RULE": 35,
+      "TRAP": 25,
+      "CHECK": 30
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-050",
+      "RULE": "RULE-001..RULE-035",
+      "TRAP": "TRAP-001..TRAP-025",
+      "CHECK": "CHECK-001..CHECK-030"
+    },
+    "chunks": [],
+    "superseded_ids": [
+      "AXIOM-007",
+      "RULE-012"
+    ],
+    "declared_total": 140,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\Full Stack Dev Youtube\\Codecamp 48 hour Tutorial\\FULLSTACK_WEB_SCRIBBA_2026.md",
+    "module_id": "MODULE_FULLSTACK_WEB_SCRIBBA_2026",
+    "domain": "FRONTEND_WEB | BACKEND_WEB (Promised)",
+    "source": "\"Become a Fullstack Developer from Scratch\" (Scribba Course)",
+    "type": "module",
+    "approx_tokens": 3501,
+    "counts": {
+      "AXIOM": 14,
+      "RULE": 16,
+      "TRAP": 12,
+      "CHECK": 16
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-014",
+      "RULE": "RULE-001..RULE-016",
+      "TRAP": "TRAP-001..TRAP-012",
+      "CHECK": "CHECK-001..CHECK-016"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 48,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\Full Stack Dev Youtube\\Systems Design\\SYSTEM_DESIGN_FULLSTACK_PRODUCTION_Pool_Module_v1.0.md",
+    "module_id": "SYSTEM_DESIGN_FULLSTACK_PRODUCTION",
+    "domain": "BACKEND_WEB | SYSTEM_DESIGN | INFRASTRUCTURE | API_DESIGN | DATABASE | SECURITY",
+    "source": "\"System Design Course \u2013 APIs, Databases, Caching, CDNs, Load Balancing & Production Infra\" (NoteGPT Transcript)",
+    "type": "module",
+    "approx_tokens": 8082,
+    "counts": {
+      "AXIOM": 35,
+      "RULE": 38,
+      "TRAP": 25,
+      "CHECK": 30
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-035",
+      "RULE": "RULE-001..RULE-038",
+      "TRAP": "TRAP-001..TRAP-025",
+      "CHECK": "CHECK-001..CHECK-030"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 97,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\Full Stack Open\\FULLSTACK_WEB_REACT_NODE_MONGO_POOL_MODULE.md",
+    "module_id": "FULLSTACK_WEB_REACT_NODE_MONGO",
+    "domain": "FULLSTACK_WEB",
+    "source": "Full Stack Open \u2014 University of Helsinki (Parts 0\u20137)",
+    "type": "module",
+    "approx_tokens": 9304,
+    "counts": {
+      "AXIOM": 44,
+      "RULE": 50,
+      "TRAP": 30,
+      "CHECK": 30
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-044",
+      "RULE": "RULE-001..RULE-050",
+      "TRAP": "TRAP-001..TRAP-030",
+      "CHECK": "CHECK-001..CHECK-030"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 142,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\PostgresSQL\\DATABASE_POSTGRESQL_FUNDAMENTALS.md",
+    "module_id": "DATABASE_POSTGRESQL_FUNDAMENTALS",
+    "domain": "DATABASE",
+    "source": "\"Learn PostgreSQL Tutorial - Full Course for Beginners\" (NoteGPT Transcript)",
+    "type": "module",
+    "approx_tokens": 8143,
+    "counts": {
+      "AXIOM": 20,
+      "RULE": 45,
+      "TRAP": 18,
+      "CHECK": 33
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-020",
+      "RULE": "RULE-001..RULE-045",
+      "TRAP": "TRAP-001..TRAP-018",
+      "CHECK": "CHECK-001..CHECK-033"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 87,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\PostgresSQL\\POSTGRESQL_POOL_MODULE_v1_0.md",
+    "module_id": "POSTGRESQL_FULL_COURSE_AMIGOSCODE",
+    "domain": "DATABASE",
+    "source": "Learn PostgreSQL Tutorial - Full Course for Beginners (Amigoscode / Nelson)",
+    "type": "module",
+    "approx_tokens": 6543,
+    "counts": {
+      "AXIOM": 20,
+      "RULE": 26,
+      "TRAP": 14,
+      "CHECK": 26
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-020",
+      "RULE": "RULE-001..RULE-026",
+      "TRAP": "TRAP-001..TRAP-014",
+      "CHECK": "CHECK-001..CHECK-026"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 62,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\REACT\\REACT_19_MONSTER_CLASS_FUNDAMENTALS_POOL_MODULE.md",
+    "module_id": "REACT_19_MONSTER_CLASS_FUNDAMENTALS",
+    "domain": "FRONTEND_WEB",
+    "source": "NoteGPT_TRANSCRIPT_50+ HOURS REACT.JS 19 MONSTER CLASS (Husan Web Dev) \u2014 First 11-12 Hours / ~45,000 words",
+    "type": "module",
+    "approx_tokens": 4829,
+    "counts": {
+      "AXIOM": 18,
+      "RULE": 20,
+      "TRAP": 15,
+      "CHECK": 20
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-018",
+      "RULE": "RULE-001..RULE-020",
+      "TRAP": "TRAP-001..TRAP-015",
+      "CHECK": "CHECK-001..CHECK-020"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 73,
+    "ids_repeat": false
+  },
+  {
+    "file": "C:\\Users\\Draven Chen\\.cursor\\skills\\POOL\\Full Stack Dev\\REACT\\REACT_19_POOL_MODULE.md",
+    "module_id": "REACT_19_MONSTER_CLASS_FUNDAMENTALS",
+    "domain": "FRONTEND_WEB",
+    "source": "50+ Hours React.js 19 Monster Class \u2014 NoteGPT Transcript + React 19 Official Docs (2026)",
+    "type": "module",
+    "approx_tokens": 25456,
+    "counts": {
+      "AXIOM": 187,
+      "RULE": 100,
+      "TRAP": 0,
+      "CHECK": 0
+    },
+    "ranges": {
+      "AXIOM": "AXIOM-001..AXIOM-187",
+      "RULE": "RULE-001..RULE-100"
+    },
+    "chunks": [],
+    "superseded_ids": [],
+    "declared_total": 187,
+    "ids_repeat": false
+  }
+]
