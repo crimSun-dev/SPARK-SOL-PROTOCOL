@@ -121,6 +121,45 @@ body.focused .region { opacity: .8; }
 }
 .mast .count b { font-weight: 700; color: var(--bone); }
 
+/* ── find, under the protocol plate ───────────────────────────────── */
+#find {
+  position: absolute; z-index: 3;
+  top: calc(var(--gutter) + 92px); left: var(--gutter);
+  width: min(340px, calc(100% - 2 * var(--gutter)));
+}
+.find-field { display: block; background: var(--void); }   /* star names never print through the field */
+.find-field input {
+  width: 100%; height: 28px; padding: 0 0 4px; margin: 0;
+  background: transparent; border: 0; border-bottom: 1px solid rgba(163, 152, 134, .62);
+  font: 400 15px/1 var(--f-work); color: var(--bone); border-radius: 0;
+}
+.find-field input::placeholder { color: var(--bone-dim); opacity: 1; letter-spacing: .02em; }
+.find-field input::-webkit-search-cancel-button { filter: grayscale(1) brightness(1.6); cursor: pointer; }
+.find-field input:focus-visible { outline: none; border-bottom-color: var(--bone); }
+#find-list {
+  margin-top: 8px; max-height: min(60vh, 520px); overflow-y: auto;
+  background: var(--lift); border: var(--hair);
+  scrollbar-width: thin; scrollbar-color: var(--bone-dim) transparent;
+}
+#find-list .head {
+  padding: 10px 14px 6px; font: 400 11.5px/1 var(--f-gauge); letter-spacing: .06em;
+  text-transform: uppercase; color: var(--bone-dim);
+}
+#find-list .head ~ .head { border-top: 1px solid rgba(163, 152, 134, .25); margin-top: 4px; }
+.hit {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  background: none; border: 0; margin: 0; padding: 7px 14px 8px;
+  color: var(--bone); font: 400 14px/1.3 var(--f-work); overflow-wrap: anywhere;
+}
+.hit .meta { display: flex; align-items: center; gap: 7px; margin-top: 3px;
+  font: 400 12px/1.2 var(--f-gauge); letter-spacing: .02em; color: var(--bone-dim); overflow-wrap: anywhere; }
+.hit .meta .dye { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+.hit .snip { display: block; margin-top: 4px; font: 400 13px/1.45 var(--f-read); color: var(--bone-dim);
+  overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.hit[aria-selected="true"], .hit:hover { background: rgba(239, 230, 212, .07); }
+.hit.nostar { cursor: default; }
+#find-list .none { padding: 10px 14px 12px; font: 400 13px/1.4 var(--f-gauge); color: var(--bone-dim); }
+
 /* ── node plate, right ────────────────────────────────────────────── */
 #plate {
   position: absolute; z-index: 3;
@@ -244,6 +283,8 @@ body.focused .region { opacity: .8; }
   #plate[aria-hidden="true"] { display: none; }
   .mast img { width: 176px; }
   .mast .count { margin-left: calc(176px * .292); }
+  #find { top: calc(var(--gutter) + 74px); }
+  body.focused #find-list { max-height: 30vh; }
   .floor { grid-template-columns: minmax(130px, 1fr) auto; column-gap: 14px; }
   .words { gap: 10px; }
   .word { font-size: 13px; letter-spacing: .02em; }
@@ -277,6 +318,14 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
          alt="F.L.A.X.E.O.N SPARK SOL. A bone spiral with one verdigris arc, and an ember X in the family name.">
     <p class="count"><b id="count">0</b> <span id="count-word">notes</span></p>
   </header>
+  <div id="find" role="search">
+    <label class="find-field">
+      <span class="sr-only">Find a star or a file</span>
+      <input id="find-q" type="search" placeholder="Find  /" autocomplete="off" spellcheck="false"
+             aria-controls="find-list" aria-expanded="false" aria-autocomplete="list">
+    </label>
+    <div id="find-list" role="listbox" aria-label="Search results" hidden></div>
+  </div>
   <p class="sr-only" id="announce" aria-live="polite"></p>
   <div id="readout" aria-live="polite">
     <p id="answer" hidden></p>
@@ -467,6 +516,7 @@ function sizeStar(n, k) {
 }
 const FILAMENT = new THREE.Color("#7dbea8");
 const cited = new Set();          // stars the last answer used
+const found = new Set();          // stars the find box matched: full dye, no name (the list names them)
 const pulsing = new Set();        // filament: a birth, or the focused star while the local voice speaks
 
 // ── memory gestures: a recall and a birth, each a short paint on the star already there ──
@@ -555,7 +605,7 @@ function tickMotifs(now) {
 function paintStar(n) {
   if (!n.__star) return;
   const { halo, dot, dye } = n.__star.userData;
-  const isF = focus === n, isH = hover === n, isC = cited.has(n), isP = pulsing.has(n);
+  const isF = focus === n, isH = hover === n, isC = cited.has(n) || found.has(n), isP = pulsing.has(n);
   const m = motifOf(n) || {};
   halo.material.opacity = Math.min(1, Math.max(0, (isF ? .95 : isH || isC || isP ? .82 : .5) + (m.ha || 0)));
   halo.material.color.copy(isP ? FILAMENT : dye);
@@ -846,7 +896,7 @@ const ask = $("ask"), hfBtn = $("handsfree"), pttBtn = $("ptt");
 const answerEl = $("answer"), badgeEl = $("badge");
 let HEALTH = null, speaking = false, paused = false, turnBusy = false;
 let lastBadge = null;              // what the badge last said; the same pair is not shown again
-window.__spark = { speakLog: [], turns: [], gestures: [], motifSlots, noteStyle, motifs, MOTIFS, pulsing, cited, nodes };   // receipts for the verify steps
+window.__spark = { speakLog: [], turns: [], gestures: [], motifSlots, noteStyle, motifs, MOTIFS, pulsing, cited, found, nodes };   // receipts for the verify steps
 
 // ── browser hosts for the drill: every resource this page ever loaded ─
 const HOSTS = new Set([location.hostname]);
@@ -1104,7 +1154,7 @@ async function swapSky() {
     $("count").textContent = nodes.length.toLocaleString("en");
     $("count-word").textContent = nodes.length === 1 ? "note" : "notes";
     setFloor(); voiceReading(); earsReading();
-    if (REMOTE) { reading("voiceread", "", ""); reading("activity", "LIVE · READ ONLY", "live"); }
+    if (REMOTE) { reading("voiceread", "", ""); reading("ears", "", ""); reading("activity", "LIVE · READ ONLY", "live"); }
     if (firstSky && nodes.length) { framed = false; setTimeout(frameFirst, 900); }
     skyRev = g.sky_rev;
   })();
@@ -1273,6 +1323,119 @@ pttBtn.addEventListener("pointerdown", pttDown);
 addEventListener("pointerup", pttUp); addEventListener("pointercancel", pttUp);
 pttBtn.addEventListener("keydown", (e) => { if ((e.key === " " || e.key === "Enter") && !e.repeat) pttDown(e); });
 pttBtn.addEventListener("keyup", (e) => { if (e.key === " " || e.key === "Enter") pttUp(); });
+
+// ── find: stars from the sky this page holds, files from this machine's index ──
+// Stars are matched here, in the page. Files come from the server's read-only
+// /search, so on the web viewer they appear only on the machine that runs SPARK SOL.
+const findQ = $("find-q"), findList = $("find-list");
+let findHits = [], findSel = -1, findTimer = 0, findAbort = null;
+const fold = (s) => String(s || "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "");
+function findStars(q) {
+  const words = fold(q).split(/[^a-z0-9]+/).filter((w) => w.length > 1);
+  if (!words.length) return [];
+  const scored = [];
+  for (const n of nodes) {
+    const label = fold(n.label), key = fold(n.key), region = fold(REGION_NAME[n.group] || n.group);
+    const body = fold((n.excerpt || "") + " " + (n.summary || "") + " " + (n.source || ""));
+    let s = 0;
+    for (const w of words) {
+      const t = label.includes(w) ? 6 : key.includes(w) ? 4 : region.includes(w) ? 2 : body.includes(w) ? 1 : 0;
+      if (!t) { s = 0; break; }                    // every word must land somewhere
+      s += t;
+    }
+    if (s) scored.push([s + (label.startsWith(words[0]) ? 3 : 0), n]);
+  }
+  return scored.sort((a, b) => b[0] - a[0] || a[1].label.localeCompare(b[1].label)).slice(0, 8).map((x) => x[1]);
+}
+function lightFound(list) {                        // the matches go to full dye; the list carries their names
+  found.clear(); for (const n of list) found.add(n);
+  repaint();
+}
+function hitButton(label, metaParts, dye, snip, onPick) {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "hit"; b.setAttribute("role", "option");
+  const t = document.createElement("span"); t.textContent = label; b.append(t);
+  const m = document.createElement("span"); m.className = "meta";
+  if (dye) { const d = document.createElement("span"); d.className = "dye"; d.style.background = dye; m.append(d); }
+  const mt = document.createElement("span"); mt.textContent = metaParts.filter(Boolean).join(" · "); m.append(mt);
+  b.append(m);
+  if (snip) { const s = document.createElement("span"); s.className = "snip"; s.textContent = snip; b.append(s); }
+  if (onPick) b.addEventListener("click", onPick); else b.classList.add("nostar");
+  return b;
+}
+function renderFind(q, stars, files, filesState) {
+  findList.textContent = ""; findHits = []; findSel = -1;
+  const head = (t) => { const h = document.createElement("div"); h.className = "head"; h.textContent = t; findList.append(h); };
+  const none = (t) => { const p = document.createElement("div"); p.className = "none"; p.textContent = t; findList.append(p); };
+  head("Stars");
+  if (!stars.length) none("No star matches.");
+  for (const n of stars) {
+    const b = hitButton(n.label, [REGION_NAME[n.group] || n.group, n.group === "documents" || n.group === "sessions" ? "" : n.key],
+                        DYES[n.group] || "var(--bone)", "", () => pickStar(n));
+    findList.append(b); findHits.push(b);
+  }
+  head("Files");
+  if (filesState === "wait") none("Searching this machine's index…");
+  else if (filesState === "down") none(REMOTE ? "Files need SPARK SOL running on this machine." : "The file index did not answer.");
+  else if (!files.length) none("No file matches.");
+  for (const f of files) {
+    const star = nodes.find((n) => n.key === f.project);
+    const rel = String(f.title || "").split(" / ").slice(1).join(" / ") || f.path;
+    const b = hitButton(rel, [star ? star.label : f.project], star ? DYES[star.group] : "", f.snippet,
+                        star ? () => pickStar(star) : null);
+    b.title = f.path;
+    findList.append(b); if (star) findHits.push(b);
+  }
+  findList.hidden = false; findQ.setAttribute("aria-expanded", "true");
+}
+function pickStar(n) { closeFind(false); openStar(n); }
+function closeFind(clear) {
+  clearTimeout(findTimer); if (findAbort) findAbort.abort();
+  findList.hidden = true; findQ.setAttribute("aria-expanded", "false");
+  lightFound([]);
+  if (clear) findQ.value = "";
+}
+function runFind() {
+  const q = findQ.value.trim();
+  clearTimeout(findTimer); if (findAbort) findAbort.abort();
+  if (q.length < 2) { closeFind(false); return; }
+  const stars = findStars(q);
+  lightFound(stars);
+  renderFind(q, stars, [], "wait");
+  findTimer = setTimeout(async () => {
+    findAbort = new AbortController();
+    try {
+      const r = await fetch(API + "/search?q=" + encodeURIComponent(q), { cache: "no-store", signal: findAbort.signal });
+      const d = await r.json();
+      if (findQ.value.trim() === q) renderFind(q, stars, d.files || [], "ok");
+    } catch (e) {
+      if (e.name !== "AbortError" && findQ.value.trim() === q) renderFind(q, stars, [], "down");
+    }
+  }, 220);
+}
+function moveSel(d) {
+  if (!findHits.length) return;
+  if (findSel >= 0) findHits[findSel].setAttribute("aria-selected", "false");
+  findSel = (findSel + d + findHits.length) % findHits.length;
+  findHits[findSel].setAttribute("aria-selected", "true");
+  findHits[findSel].scrollIntoView({ block: "nearest" });
+}
+findQ.addEventListener("input", runFind);
+findQ.addEventListener("keydown", (e) => {
+  e.stopPropagation();                             // the sky's own keys stay with the sky
+  if (e.key === "ArrowDown") { moveSel(1); e.preventDefault(); }
+  else if (e.key === "ArrowUp") { moveSel(-1); e.preventDefault(); }
+  else if (e.key === "Enter") { const b = findHits[findSel >= 0 ? findSel : 0]; if (b) b.click(); e.preventDefault(); }
+  else if (e.key === "Escape") { closeFind(true); findQ.blur(); $("sky").focus(); }
+});
+findQ.addEventListener("focus", () => { if (findQ.value.trim().length >= 2) runFind(); });
+document.addEventListener("pointerdown", (e) => { if (!$("find").contains(e.target)) { findList.hidden = true; findQ.setAttribute("aria-expanded", "false"); } });
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (/^(INPUT|TEXTAREA)$/.test(document.activeElement?.tagName)) return;
+  e.preventDefault(); findQ.focus(); findQ.select();
+});
+window.__spark.findStars = findStars;
 
 // ── boot ──────────────────────────────────────────────────────────────
 if (REMOTE) {                      // the web viewer: no ask line, no ears, no voice

@@ -230,6 +230,38 @@ def search_index(question: str, k: int = 3) -> list[dict]:
     return out
 
 
+def search_files(query: str, k: int = 10) -> list[dict]:
+    """The page's file search: best chunk per file from the local index, at most k
+    files, every word required first and any word as a fallback. Read-only. The
+    snippet is already scrubbed; the index never held a key."""
+    words = list(dict.fromkeys(re.findall(r"[a-z0-9]+", query.lower()[:200])))
+    words = [w for w in words if w not in STOP and len(w) > 1][:8]
+    if not words or not INDEX_DB.exists():
+        return []
+    out, seen = [], set()
+    try:
+        con = sqlite3.connect(f"file:{INDEX_DB.as_posix()}?mode=ro", uri=True, timeout=2)
+        try:
+            for joiner in (" AND ", " OR "):
+                rows = con.execute(
+                    "SELECT project, path, title, body FROM chunks WHERE chunks MATCH ? "
+                    "ORDER BY bm25(chunks, 4.0, 1.0) LIMIT 80",
+                    (joiner.join(f'"{w}"' for w in words),)).fetchall()
+                for project, path, title, body in rows:
+                    if path in seen:
+                        continue
+                    seen.add(path)
+                    out.append({"project": project, "path": path, "title": title,
+                                "snippet": best_span(body or "", query, 220)})
+                    if len(out) == k:
+                        return out
+        finally:
+            con.close()
+    except sqlite3.Error:
+        return out
+    return out
+
+
 # ── brains ────────────────────────────────────────────────────────────────
 class BrainError(Exception):
     pass
@@ -695,7 +727,7 @@ ALLOWED_ORIGINS = {f"http://{HOST}:{PORT}", f"http://localhost:{PORT}"}
 # The GitHub Pages viewer. It may READ the sky and the health line from this
 # machine's server and nothing else: no /chat, no /remember, no POST of any kind.
 WEB_VIEWER_ORIGINS = {"https://crimsun-dev.github.io"}
-WEB_VIEWER_PATHS = {"/graph", "/health"}
+WEB_VIEWER_PATHS = {"/graph", "/health", "/search"}
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -726,6 +758,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
               ctype="application/json", headers=None):
         if body is None:
             body = json.dumps(obj, ensure_ascii=False).encode()
+        # A refused POST whose body was never read would leave those bytes on a
+        # kept-alive connection, to be parsed as the next request (a 501).
+        if self.command == "POST" and not getattr(self, "_body_read", False):
+            self.close_connection = True
         self.send_response(code)
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
@@ -735,6 +771,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def _body(self) -> bytes:
+        self._body_read = True
         n = int(self.headers.get("Content-Length") or 0)
         return self.rfile.read(min(n, 20 * 1024 * 1024)) if n else b""
 
@@ -775,6 +812,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 public = read_memory.public_graph(GRAPH)
             return self._send(200, {**public, "sky_rev": STATE["sky_rev"],
                                     "mem_rev": STATE["mem_rev"]}, headers=web)
+        if u.path == "/search":                 # read-only file search for the find box
+            q = (parse_qs(u.query).get("q") or [""])[0]
+            with LOCK:
+                key_to_id = {n.get("key"): n["id"] for n in GRAPH["nodes"]}
+            hits = search_files(q)
+            for h in hits:
+                h["star"] = key_to_id.get(h["project"])
+            return self._send(200, {"query": q[:200], "files": hits}, headers=web)
         if u.path == "/drill/connections":
             since = float((parse_qs(u.query).get("since") or ["0"])[0])
             # The page's list is everything it has ever loaded, so the latest post
@@ -788,6 +833,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         return self.client_address[0] in ("127.0.0.1", "::1")
 
     def do_POST(self):
+        self._body_read = False                 # per request: the handler serves a whole connection
         if not self._origin_ok():
             return self._send(403, {"error": "origin not allowed"})
         u = urlsplit(self.path)
