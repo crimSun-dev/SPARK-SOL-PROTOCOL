@@ -7,7 +7,7 @@ The GitHub watch runs on the operator's PC. While the PC is off, a new or change
 - A scheduled GitHub Action, `github-to-memory`, runs every 30 minutes, and can also be started by hand.
 - It runs `cloud_github.py`, which lists every repo the read-only tokens can see and writes one `repo_index` summary per repo that is not cloned on the PC (`gh_<owner_repo>`).
   - It uses `build.py`'s own summary code, so a document from the cloud and one from the PC are identical, and neither side rewrites the other's work.
-  - It never deletes. A token that cannot see private repos would make them look deleted, so removing a gone repo's summary stays with the PC's indexer, which lists through the operator's own sign-in.
+  - It deletes a summary only when GitHub confirms the repo is gone. That means: no token failed; the repo is missing from the listing; its exact name answers 404, or redirects after a rename; and, for a private repo, the listing proved that the token sees private repos. A token that sees less therefore never makes repos look deleted.
 - Repos cloned on the PC keep their file-based summaries. Updating those stays the PC's job.
 - Secrets live in the repo's encrypted Actions secrets:
   - `NEON_URL`: Flaxeon's Neon connection string.

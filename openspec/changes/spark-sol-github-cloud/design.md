@@ -29,7 +29,20 @@ The Action holds its own credential, `NEON_URL`. Flaxeon's passkey gates process
 
 ### 3. Tokens
 
-Fine-grained personal access tokens are scoped to one owner. `GH_READ_TOKENS` therefore holds one or more tokens separated by whitespace, for example one for crimSun-dev and one for the K-nity organisation. Each needs only "Metadata: read" and "Contents: read". Listings are merged. The job never deletes: a dry run with a public-only token showed that 10 private repos would have looked deleted.
+Fine-grained personal access tokens are scoped to one owner. `GH_READ_TOKENS` therefore holds one or more tokens separated by whitespace, for example one for crimSun-dev and one for the K-nity organisation. Each needs only "Metadata: read" and "Contents: read". Listings are merged.
+
+### 5. Deletes need GitHub's confirmation
+
+A dry run with a public-only token showed that 10 private repos would have looked deleted if a missing listing entry were enough. So a delete needs three things:
+- a clean listing;
+- a 404 from `repos/{owner}/{name}` for every token;
+- for a summary marked private, proof in that listing that the token sees the owner's private repos.
+
+A rename answers with the new full name, so the old key is removed.
+
+Verified 2026-11-11 with two planted summaries for repos that never existed, one public and one private:
+- With the real token, both were deleted, and the K-nity summaries (not visible to the token) were kept.
+- In a public-only simulation, only the public one was deleted, and all 15 private and K-nity summaries were kept.
 
 ### 4. A token that sees less never writes less
 
