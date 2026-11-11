@@ -7,8 +7,9 @@ on the PC have richer summaries from their files; those stay the PC's job.
 
     NEON_URL=...  GH_READ_TOKENS="tok1 tok2"  GH_OWNERS="K-nity"  python cloud_github.py [--dry-run]
 
-A token failure turns every delete off for that run, so a partial listing can
-never make a repo look deleted.
+It never deletes. A token that cannot see private repos would make every
+private repo look deleted, so removing a gone repo's summary stays with the PC's
+indexer, which lists through the operator's own GitHub sign-in.
 
 Without GH_READ_TOKENS it uses the gh CLI's own sign-in (for a local test).
 The log is counts only: the repo is public, and so are its Action logs.
@@ -60,8 +61,9 @@ def list_repos(tokens: list[str]) -> tuple[list[dict], set[str], int]:
             for r in build.github_repos(lambda s: None, OWNERS):
                 repos[r["nameWithOwner"]] = r
                 owners.add(r["nameWithOwner"].split("/")[0].lower())
-        except Exception:
+        except Exception as e:                    # the type only: the message can name a private repo
             failed += 1
+            print(f"token {failed}: listing failed ({type(e).__name__})", file=sys.stderr)
         finally:
             if tok:
                 if saved is None:
@@ -97,8 +99,7 @@ def main(argv=None) -> int:
         build.attach_github(prj, [r for r in repos if r["nameWithOwner"] not in cloned], False, lambda s: None)
         want = {p["key"]: payload_for(p) for p in prj.by_key.values()}
 
-        written = unchanged = deleted = 0
-        live = {r["nameWithOwner"].lower() for r in repos}
+        written = unchanged = 0
         with con.cursor() as cur:
             for key, payload in sorted(want.items()):
                 if same(payload, mine.get(key)):
@@ -110,19 +111,12 @@ def main(argv=None) -> int:
                                 "ON CONFLICT (name) DO UPDATE SET payload = EXCLUDED.payload, "
                                 "updated_at = EXCLUDED.updated_at",
                                 (key, json.dumps(payload, ensure_ascii=False), datetime.now(timezone.utc)))
-            for key, d in sorted(mine.items()):          # a GitHub-only repo that no longer exists
-                nwo = str(d.get("title") or "")
-                if (not failed and key.startswith("gh_") and key not in want and "/" in nwo
-                        and nwo.split("/")[0].lower() in owners and nwo.lower() not in live):
-                    deleted += 1
-                    if not dry:
-                        cur.execute("DELETE FROM memory_documents WHERE name = %s", (key,))
         if not dry:
             con.commit()
     print(("DRY RUN: " if dry else "") + json.dumps({
         "repos_listed": len(repos), "owners": len(owners), "token_failures": failed,
         "cloned_on_pc": len(cloned & {r["nameWithOwner"] for r in repos}), "github_only": len(want),
-        "written": written, "unchanged": unchanged, "deleted": deleted}))
+        "written": written, "unchanged": unchanged}))
     return 1 if failed else 0
 
 

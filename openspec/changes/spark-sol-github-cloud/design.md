@@ -4,7 +4,7 @@ See proposal.md. The PC's indexer owns every `spark_sol_build` document. Summari
 
 ## Goals / Non-Goals
 
-**Goals:** new, pushed and deleted GitHub-only repos reach Flaxeon's memory within about 30 minutes while the PC is off.
+**Goals:** new and pushed GitHub-only repos reach Flaxeon's memory within about 30 minutes while the PC is off. Deleted repos are removed by the PC's next run.
 
 **Non-Goals:**
 - Cloned repos.
@@ -29,7 +29,7 @@ The Action holds its own credential, `NEON_URL`. Flaxeon's passkey gates process
 
 ### 3. Tokens
 
-Fine-grained personal access tokens are scoped to one owner. `GH_READ_TOKENS` therefore holds one or more tokens separated by whitespace, for example one for crimSun-dev and one for the K-nity organisation. Each needs only "Metadata: read" and "Contents: read". Listings are merged, and deletes are limited to owners that were listed.
+Fine-grained personal access tokens are scoped to one owner. `GH_READ_TOKENS` therefore holds one or more tokens separated by whitespace, for example one for crimSun-dev and one for the K-nity organisation. Each needs only "Metadata: read" and "Contents: read". Listings are merged. The job never deletes: a dry run with a public-only token showed that 10 private repos would have looked deleted.
 
 ## Risks / Trade-offs
 

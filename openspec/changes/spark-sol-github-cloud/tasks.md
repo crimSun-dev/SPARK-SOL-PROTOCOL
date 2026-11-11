@@ -1,6 +1,6 @@
 ## 1. Job
 
-- [x] 1.1 Write `cloud_github.py` with the PC's document code, cloned-repo detection, compare-before-write, and owner-scoped deletes. Verified with a dry run against Neon: 60 repos, 36 cloned, 23 of 24 unchanged; the 1 write is a real pull-request count change; 0 deletes.
+- [x] 1.1 Write `cloud_github.py` with the PC's document code, cloned-repo detection, and compare-before-write, with no deletes. Verified with a dry run against Neon: 60 repos, 36 cloned, 23 of 24 unchanged; the 1 write is a real pull-request count change; Deletes were removed after a public-only token showed that 10 private repos would look deleted.
 - [x] 1.2 Add the scheduled workflow, and set the `NEON_URL` secret. Verify that a run without `GH_READ_TOKENS` exits cleanly having done nothing.
 
 ## 2. Tokens and a real run

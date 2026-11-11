@@ -15,12 +15,12 @@ On a schedule, the cloud job MUST list the repos visible to its tokens. It MUST 
 - **WHEN** GitHub matches what Neon holds
 - **THEN** the job writes nothing
 
-### Requirement: Deletes only on a complete listing
-The job MUST delete a GitHub-only summary only when that repo's owner was listed and the repo is gone. A token that fails MUST NOT cause a delete.
+### Requirement: The cloud job never deletes
+The cloud job MUST NOT delete any document. A repo missing from its listing MUST be left to the PC's indexer, because the cloud job's tokens may not see every repo.
 
-#### Scenario: A token expires
-- **WHEN** one token can no longer list its owner's repos
-- **THEN** no summary of that owner is deleted, and the job reports a token failure
+#### Scenario: A token without private access
+- **WHEN** the token lists only public repos
+- **THEN** no summary of a private repo is removed
 
 ### Requirement: Public logs carry no memory
 The job's output MUST be counts only. It MUST NOT include repo names, descriptions, READMEs or secrets. It MUST exit without changes when its secrets are not set.
